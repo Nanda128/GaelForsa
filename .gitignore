@@ -1,0 +1,7 @@
+.venv
+GaelForsa.iml
+.idea/
+out/
+.DS_Store
+*.log
+.vscode/
