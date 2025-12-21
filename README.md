@@ -12,7 +12,7 @@ A stretch goal is to use weather conditions to determine the ideal time to send 
 
 Below is a list of the parameters we want to collect to support our system:
 
-*... NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END THE END IS NEVER THE END IS ...
+... NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END THE END IS NEVER THE END IS ...
 
 ****
 
