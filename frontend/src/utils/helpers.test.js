@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { escapeHtml, formatDateTime } from './helpers.js';
+import {describe, it, expect} from 'vitest';
+import {escapeHtml, formatDateTime} from './helpers.js';
 
 describe('Helper Utils', () => {
     describe('escapeHtml', () => {

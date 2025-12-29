@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { showLoading, hideLoading, showError } from './ui.js';
+import {describe, it, expect, beforeEach, afterEach, vi} from 'vitest';
+import {showLoading, hideLoading, showError} from './ui.js';
 
 describe('UI Utils', () => {
     beforeEach(() => {

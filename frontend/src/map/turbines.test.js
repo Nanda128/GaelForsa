@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { STATUS_COLORS } from './turbines.js';
+import {describe, it, expect} from 'vitest';
+import {STATUS_COLORS} from './turbines.js';
 
 describe('Turbines Module', () => {
     describe('STATUS_COLORS', () => {

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { getApiBaseUrl } from './api.js';
+import {describe, it, expect} from 'vitest';
+import {getApiBaseUrl} from './api.js';
 
 describe('API Utils', () => {
     describe('getApiBaseUrl', () => {

@@ -22,10 +22,6 @@ export function formatDateTime(isoString) {
 
     const date = new Date(isoString);
     return date.toLocaleString('en-IE', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 }

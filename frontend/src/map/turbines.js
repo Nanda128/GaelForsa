@@ -1,8 +1,8 @@
 // Turbine marker logic for Leaflet map and connect to the backend API
 import L from 'leaflet';
-import { getApiBaseUrl } from '../utils/api.js';
-import { showLoading, hideLoading, showError } from '../utils/ui.js';
-import { escapeHtml, formatDateTime } from '../utils/helpers.js';
+import {getApiBaseUrl} from '../utils/api.js';
+import {showLoading, hideLoading, showError} from '../utils/ui.js';
+import {escapeHtml, formatDateTime} from '../utils/helpers.js';
 
 /**
  * @typedef {Object} Turbine
@@ -16,9 +16,7 @@ import { escapeHtml, formatDateTime } from '../utils/helpers.js';
  */
 
 export const STATUS_COLORS = {
-    green: '#28a745',
-    yellow: '#ffc107',
-    red: '#dc3545'
+    green: '#28a745', yellow: '#ffc107', red: '#dc3545'
 };
 
 let turbineMarkers = [];
@@ -30,9 +28,7 @@ let turbineMarkers = [];
  */
 function getStatusLabel(status) {
     const labels = {
-        green: 'Healthy',
-        yellow: 'Warning',
-        red: 'Critical'
+        green: 'Healthy', yellow: 'Warning', red: 'Critical'
     };
     return labels[status] || 'Unknown';
 }
@@ -67,12 +63,7 @@ function createTurbineMarker(turbine) {
     const color = STATUS_COLORS[turbine.status] || STATUS_COLORS.green;
 
     const marker = L.circleMarker([turbine.latitude, turbine.longitude], {
-        radius: 12,
-        fillColor: color,
-        color: '#fff',
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.8
+        radius: 12, fillColor: color, color: '#fff', weight: 2, opacity: 1, fillOpacity: 0.8
     });
 
     const popupContent = createPopupContent(turbine);
