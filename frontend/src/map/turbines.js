@@ -1,5 +1,9 @@
 // Turbine marker logic for Leaflet map and connect to the backend API
+
 import L from 'leaflet';
+import 'leaflet.markercluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import {getApiBaseUrl} from '../utils/api.js';
 import {showLoading, hideLoading, showError} from '../utils/ui.js';
 import {escapeHtml, formatDateTime} from '../utils/helpers.js';
@@ -19,7 +23,20 @@ export const STATUS_COLORS = {
     green: '#28a745', yellow: '#ffc107', red: '#dc3545'
 };
 
-let turbineMarkers = [];
+/**
+ * Configuration options for marker clustering
+ * @type {Object}
+ */
+export const CLUSTER_CONFIG = {
+    chunkedLoading: true,           //Load markers in chunks for better performance
+    maxClusterRadius: 50,           //Cluster markers within 50px at current zoom
+    spiderfyOnMaxZoom: true,        //Spread out overlapping markers at max zoom
+    showCoverageOnHover: false,     //Disable coverage polygon on hover for performance
+    zoomToBoundsOnClick: true,      //Zoom to cluster bounds on click
+    disableClusteringAtZoom: 16     //Disable clustering at high zoom levels
+};
+
+let markerClusterGroup = null;
 
 /**
  * Get human-readable status label
@@ -77,8 +94,10 @@ function createTurbineMarker(turbine) {
  * @param {L.Map} map - The Leaflet map instance
  */
 function clearMarkers(map) {
-    turbineMarkers.forEach(marker => map.removeLayer(marker));
-    turbineMarkers = [];
+    if (markerClusterGroup) {
+        map.removeLayer(markerClusterGroup);
+        markerClusterGroup = null;
+    }
 }
 
 /**
@@ -103,17 +122,19 @@ export async function loadTurbines(map) {
         const turbines = data.results || data;
         clearMarkers(map);
 
+        markerClusterGroup = L.markerClusterGroup(CLUSTER_CONFIG);
+
         turbines.forEach(turbine => {
             if (turbine.latitude && turbine.longitude) {
                 const marker = createTurbineMarker(turbine);
-                marker.addTo(map);
-                turbineMarkers.push(marker);
+                markerClusterGroup.addLayer(marker);
             }
         });
 
-        if (turbineMarkers.length > 0) {
-            const group = L.featureGroup(turbineMarkers);
-            map.fitBounds(group.getBounds().pad(0.1));
+        map.addLayer(markerClusterGroup);
+
+        if (markerClusterGroup.getLayers().length > 0) {
+            map.fitBounds(markerClusterGroup.getBounds().pad(0.1));
         }
 
         console.log(`Loaded ${turbines.length} turbines`);
