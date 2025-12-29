@@ -22,6 +22,13 @@ export default defineConfig({
 
     preview: {
         port: 4173
+    },
+
+    // Test config (Vitest)
+    test: {
+        environment: 'jsdom',
+        globals: true,
+        include: ['src/**/*.{test,spec}.{js,ts}', 'tests/**/*.{test,spec}.{js,ts}']
     }
 });
 
