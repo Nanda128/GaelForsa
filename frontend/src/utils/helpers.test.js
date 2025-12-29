@@ -52,7 +52,7 @@ describe('Helper Utils', () => {
             const isoString = '2025-06-15T14:30:00Z';
             const result = formatDateTime(isoString);
 
-            expect(result).toContain('2024');
+            expect(result).toContain('2025');
             expect(result).not.toBe('N/A');
         });
 
