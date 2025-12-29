@@ -1,11 +1,23 @@
 // GaelFórsa Turbine Map Entry Point
-import {initMap, loadTurbines} from './map/index.js';
+import {initMap, loadTurbines, filterTurbines, focusOnTurbine, initSidebar, updateSidebarTurbines} from './map/index.js';
 import './styles/main.css';
 
-// Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const map = initMap();
-    loadTurbines(map).catch((error) => {
-        console.error('Failed to load turbines:', error);
+
+    initSidebar({
+        onTurbineClick: (turbine) => {
+            focusOnTurbine(map, turbine);
+        },
+        onFilterChange: (statusFilters) => {
+            filterTurbines(map, statusFilters);
+        }
     });
+
+    try {
+        const turbines = await loadTurbines(map);
+        updateSidebarTurbines(turbines);
+    } catch (error) {
+        console.error('Failed to load turbines:', error);
+    }
 });

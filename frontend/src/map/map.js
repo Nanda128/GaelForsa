@@ -16,7 +16,13 @@ export const MAP_CONFIG = {
  * @returns {L.Map} The initialized map instance
  */
 export function initMap(containerId = 'map') {
-    const map = L.map(containerId).setView(MAP_CONFIG.center, MAP_CONFIG.zoom);
+    const map = L.map(containerId, {
+        zoomControl: false // Disable default zoom control position
+    }).setView(MAP_CONFIG.center, MAP_CONFIG.zoom);
+
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
 
     L.tileLayer(MAP_CONFIG.tileUrl, {
         maxZoom: MAP_CONFIG.maxZoom,

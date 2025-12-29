@@ -37,6 +37,8 @@ export const CLUSTER_CONFIG = {
 };
 
 let markerClusterGroup = null;
+let allTurbines = [];
+let turbineMarkers = new Map();
 
 /**
  * Get human-readable status label
@@ -103,6 +105,7 @@ function clearMarkers(map) {
 /**
  * Fetch turbines from API and add markers to map
  * @param {L.Map} map - The Leaflet map instance
+ * @returns {Promise<Turbine[]>} Array of loaded turbines
  */
 export async function loadTurbines(map) {
     showLoading();
@@ -114,19 +117,23 @@ export async function loadTurbines(map) {
         if (!response.ok) {
             console.error('Error loading turbines:', `HTTP error! status: ${response.status}`);
             showError('Failed to load turbines. Please check the API connection.');
-            return;
+            return [];
         }
 
         const data = await response.json();
 
         const turbines = data.results || data;
+        allTurbines = turbines;
         clearMarkers(map);
 
         markerClusterGroup = L.markerClusterGroup(CLUSTER_CONFIG);
+        turbineMarkers.clear();
 
         turbines.forEach(turbine => {
             if (turbine.latitude && turbine.longitude) {
                 const marker = createTurbineMarker(turbine);
+                marker.turbineData = turbine;
+                turbineMarkers.set(turbine.id, marker);
                 markerClusterGroup.addLayer(marker);
             }
         });
@@ -138,12 +145,52 @@ export async function loadTurbines(map) {
         }
 
         console.log(`Loaded ${turbines.length} turbines`);
+        return turbines;
 
     } catch (error) {
         console.error('Error loading turbines:', error);
         showError('Failed to load turbines. Please check the API connection.');
+        return [];
     } finally {
         hideLoading();
     }
+}
+
+/**
+ * Filter turbines on the map based on status
+ * @param {L.Map} map - The Leaflet map instance
+ * @param {Object} statusFilters - Object with status keys and boolean values
+ */
+export function filterTurbines(map, statusFilters) {
+    if (!markerClusterGroup) return;
+
+    markerClusterGroup.clearLayers();
+
+    allTurbines.forEach(turbine => {
+        if (turbine.latitude && turbine.longitude && statusFilters[turbine.status]) {
+            const marker = turbineMarkers.get(turbine.id);
+            if (marker) {
+                markerClusterGroup.addLayer(marker);
+            }
+        }
+    });
+}
+
+/**
+ * Focus map on a specific turbine and open its popup
+ * @param {L.Map} map - The Leaflet map instance
+ * @param {Turbine} turbine - The turbine to focus on
+ */
+export function focusOnTurbine(map, turbine) {
+    const marker = turbineMarkers.get(turbine.id);
+    if (!marker) return;
+
+    map.setView([turbine.latitude, turbine.longitude], 14);
+
+    setTimeout(() => {
+        markerClusterGroup.zoomToShowLayer(marker, () => {
+            marker.openPopup();
+        });
+    }, 300); // in case map doesn't settle
 }
 

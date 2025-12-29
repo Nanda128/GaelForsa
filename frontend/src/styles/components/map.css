@@ -2,8 +2,38 @@
 
 #map {
     height: 100%;
-    width: 100%;
+    width: calc(100% - 320px);
     position: absolute;
     top: 0;
-    left: 0;
+    left: 320px;
+    transition: left 0.3s ease, width 0.3s ease;
+}
+
+.sidebar.collapsed ~ #map {
+    left: 40px;
+    width: calc(100% - 40px);
+}
+
+@media (max-width: 768px) {
+    #map {
+        width: calc(100% - 280px);
+        left: 280px;
+    }
+
+    .sidebar.collapsed ~ #map {
+        left: 40px;
+        width: calc(100% - 40px);
+    }
+}
+
+@media (max-width: 480px) {
+    #map {
+        width: 100%;
+        left: 0;
+    }
+
+    .sidebar.collapsed ~ #map {
+        left: 0;
+        width: 100%;
+    }
 }
