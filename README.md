@@ -8,6 +8,22 @@ It collects information from various sensors installed on the turbines, such as 
 It then compares these against a list of ideal factors in order to determine the health of the turbine, and current severity.
 A stretch goal is to use weather conditions to determine the ideal time to send maintenance crews.
 
+## Quick Start
+
+Run these commands in **two separate terminals**:
+
+**Terminal 1 - Backend:**
+```bash
+cd backend && python manage.py runserver
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend && npm install && npm run dev
+```
+
+Then open http://localhost:3000 in your browser.
+
 ****
 
 Below is a list of the parameters we want to collect to support our system:

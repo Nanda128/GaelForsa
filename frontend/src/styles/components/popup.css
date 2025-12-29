@@ -1,0 +1,59 @@
+/* Styles for Leaflet popups displaying wind turbine information */
+
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-content {
+    margin: 12px 16px;
+    font-size: 14px;
+}
+
+.turbine-popup {
+    min-width: 180px;
+}
+
+.turbine-popup h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.turbine-popup .status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.turbine-popup .status.green {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.turbine-popup .status.yellow {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.turbine-popup .status.red {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.turbine-popup .last-updated {
+    font-size: 12px;
+    color: #666;
+    margin-top: 8px;
+}
+
+.turbine-popup .last-updated strong {
+    color: #333;
+}
+

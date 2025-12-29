@@ -50,6 +50,12 @@ out/
 .env.local
 
 # OS
-.DS_Store
 Thumbs.db
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Vite cache
+.vite/
 

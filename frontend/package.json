@@ -1,0 +1,26 @@
+{
+  "name": "gaelforsa-frontend",
+  "version": "1.0.0",
+  "description": "GaelFórsa Wind Turbine Monitoring Frontend",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "wind-turbine",
+    "monitoring",
+    "leaflet",
+    "map"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.21",
+    "vite": "^6.0.0"
+  }
+}
