@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GaelFórsa - Turbine Map</title>
+</head>
+<body>
+    <div id="app">
+        <aside id="sidebar" class="sidebar">
+            <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Toggle sidebar">
+                <span class="toggle-icon">☰</span>
+            </button>
+            <div class="sidebar-content">
+                <h2 class="sidebar-title">Turbines</h2>
+                <div class="search-container">
+                    <label for="turbine-search" class="visually-hidden">Search turbines by name</label>
+                    <input type="text" id="turbine-search" class="search-input" placeholder="Search by name..." aria-label="Search turbines by name">
+                </div>
+                <div class="filter-container">
+                    <h3 class="filter-title">Filter by Status</h3>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="checkbox" id="filter-green" checked>
+                            <span class="status-indicator green"></span>
+                            Healthy
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" id="filter-yellow" checked>
+                            <span class="status-indicator yellow"></span>
+                            Warning
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" id="filter-red" checked>
+                            <span class="status-indicator red"></span>
+                            Critical
+                        </label>
+                    </div>
+                </div>
+                <div id="turbine-list" class="turbine-list"></div>
+            </div>
+        </aside>
+        <div id="map"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,28 @@
+/* Styles for error and success messages */
+
+.error-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.success-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #d4edda;
+    color: #155724;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+

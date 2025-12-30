@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'django_filters',
     'drf_yasg',
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -171,3 +173,5 @@ REST_FRAMEWORK = {
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
 }
+
+CORS_ALLOW_ALL_ORIGINS = True  # Would be restricted in a real-world production environment
