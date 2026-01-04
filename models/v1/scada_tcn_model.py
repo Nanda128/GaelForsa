@@ -1,0 +1,67 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
+from typing import Tuple, Optional
+
+
+class ResidualBlock(nn.Module):
+
+    def __init__(self, in_channels: int, out_channels: int, kernel_size: int, dilation: int, dropout: float = 0.2):
+        super().__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+
+        padding = (kernel_size - 1) * dilation
+
+        self.conv1 = nn.Conv1d(in_channels, out_channels, kernel_size, dilation=dilation, padding=padding)
+        self.conv2 = nn.Conv1d(out_channels, out_channels, kernel_size, dilation=dilation, padding=padding)
+
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
+        self.residual_conv = nn.Conv1d(in_channels, out_channels, 1) if in_channels != out_channels else None
+
+        self.relu = nn.ReLU()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass with residual connection.
+
+        Args:
+            x: Input tensor (B, C, L)
+
+        Returns:
+            Output tensor (B, C_out, L)
+        """
+        # Remove padding from causal conv to maintain causality
+        out = self.conv1(x)
+        out = out[:, :, :x.size(2)]  # Remove future padding
+        out = self.relu(out)
+        out = self.dropout1(out)
+
+        out = self.conv2(out)
+        out = out[:, :, :x.size(2)]  # Remove future padding
+        out = self.relu(out)
+        out = self.dropout2(out)
+
+        # Residual connection
+        residual = self.residual_conv(x) if self.residual_conv else x
+        return out + residual
+
+class ReconstructionHead(nn.Module):
+    """
+    Reconstruction head: maps hidden to feature reconstruction.
+    """
+    def __init__(self, hidden_channels: int, output_channels: int):
+        super().__init__()
+        self.conv = nn.Conv1d(hidden_channels, output_channels, 1)  # 1x1 conv
+
+    def forward(self, h: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            h: Hidden representation (B, D, L)
+
+        Returns:
+            Reconstructed features (B, F, L)
+        """
+        return self.conv(h)
