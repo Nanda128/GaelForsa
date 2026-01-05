@@ -11,7 +11,7 @@ class ResidualBlock(nn.Module):
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
-
+        #casual convolution padding maintains sequence length
         padding = (kernel_size - 1) * dilation
 
         self.conv1 = nn.Conv1d(in_channels, out_channels, kernel_size, dilation=dilation, padding=padding)
@@ -19,8 +19,8 @@ class ResidualBlock(nn.Module):
 
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
-        self.residual_conv = nn.Conv1d(in_channels, out_channels, 1) if in_channels != out_channels else None
 
+        self.residual_conv = nn.Conv1d(in_channels, out_channels, 1) if in_channels != out_channels else None
         self.relu = nn.ReLU()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -33,7 +33,7 @@ class ResidualBlock(nn.Module):
         Returns:
             Output tensor (B, C_out, L)
         """
-        # Remove padding from causal conv to maintain causality
+        # Remove padding from causal conv to maintain
         out = self.conv1(x)
         out = out[:, :, :x.size(2)]  # Remove future padding
         out = self.relu(out)
@@ -44,7 +44,6 @@ class ResidualBlock(nn.Module):
         out = self.relu(out)
         out = self.dropout2(out)
 
-        # Residual connection
         residual = self.residual_conv(x) if self.residual_conv else x
         return out + residual
 

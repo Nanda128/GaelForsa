@@ -33,7 +33,7 @@ class TurbineFaultPredictor:
             'vibration_level': np.random.normal(2.0, 0.8, n_samples).clip(0.5, 8.0),
             'generator_temp': np.random.normal(65, 15, n_samples).clip(20, 120),
             'gearbox_oil_temp': np.random.normal(60, 10, n_samples).clip(20, 100),
-            'power_output': n.random.normal(1500, 400, n_samples).clip(0, 3000),
+            'power_output': np.random.normal(1500, 400, n_samples).clip(0, 3000),
             'wind_speed': np.random.normal(8, 3, n_samples).clip(0, 25),
             'wind_direction': np.random.uniform(0, 360, n_samples),
             'days_since_last_maintenance': np.random.exponential(30, n_samples).clip(1, 365),

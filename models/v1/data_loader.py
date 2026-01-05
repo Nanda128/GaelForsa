@@ -1,12 +1,12 @@
 import pandas as pd 
 import numpy as np
-from typoing import Tuple, Dict, List
+from typing import Tuple, Dict, List
 from sklearn.preprocessing import StandardScaler
 import torch
 from torch.utils.data import Dataset, Dataloader 
 
 class SCADADataLoader:
-    def __init__(self, data_path: str = 'FIX LATER FILE'):
+    def __init__(self, data_path: str = 'data'):
         self.data_path = data_path
         self.scaler = StandardScaler()
         self.feature_columns = [
@@ -53,11 +53,9 @@ class SCADADataLoader:
                 data[col] = np.random.normal(10, 3, n_samples)
 
         data['turbine_id'] = np.random.choice(['T001', 'T002', 'T003'], n_samples)
-
         data['curtailment'] = np.random.choice([0, 1], n_samples, p=[0.9, 0.1])
         data['maintenance'] = np.random.choice([0, 1], n_samples, p=[0.95, 0.05])
         data['grid_event'] = np.random.choice([0, 1], n_samples, p=[0.98, 0.02])
-
         data['fault_class'] = np.random.choice([0, 1, 2, 3, 4], n_samples, p=[0.8, 0.05, 0.05, 0.05, 0.05])
 
         return pd.DataFrame(data)
@@ -70,7 +68,6 @@ class SCADADataLoader:
         print(f"Loading real data from {data_path}...")
 
         all_dataframes = []
-
         if os.path.isdir(data_path):
             print("Loading from directory...")
             csv_files = []
@@ -84,7 +81,7 @@ class SCADADataLoader:
 
             print(f"Found {len(csv_files)} Turbine_Data CSV files")
 
-      
+      #load turbine_data
             for csv_file in csv_files:
                 print(f"Loading {csv_file}...")
                 try:
@@ -95,7 +92,7 @@ class SCADADataLoader:
                     except (UnicodeDecodeError, pd.errors.ParserError):
                         df = pd.read_csv(csv_file, encoding='cp1252', low_memory=False, sep=',', quotechar='"', comment='#')
 
-               
+               #turbine id get
                 filename = os.path.basename(csv_file)
                 turbine_match = filename.split('_')
                 if len(turbine_match) >= 3 and turbine_match[2].isdigit():
@@ -107,8 +104,16 @@ class SCADADataLoader:
         elif data_path.lower().endswith('.zip'):
 
             with zipfile.ZipFile(data_path, 'r') as zip_ref:
-
+                #load files from zip
                 file_list = zip_ref.namelist()
                 print(f"Files in zip: {file_list}")
 
-                csv_files = [f for f in file_list if f.lower().endswith('.csv') and 'turbine_data' in f.lower()]       
+                csv_files = [f for f in file_list if f.lower().endswith('.csv') and 'turbine_data' in f.lower()]
+                
+                if not csv_files:
+                    raise ValueError("No Turbine_Data CSV files found in zip")       
+                
+                #load all data files
+                #get turbine id
+                #combine dataframes
+                #missing values timestamps faults...

@@ -48,7 +48,7 @@ def train_model(num_epochs: int = 50, batch_size: int = 32, learning_rate: float
 
 
     trainer = SCADATCNTrainer(model, device)
-    traineer.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    trainer.optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     best_val_loss = float('inf')
 
@@ -63,7 +63,6 @@ def train_model(num_epochs: int = 50, batch_size: int = 32, learning_rate: float
             for k in train_losses[0].keys()
         }
 
-        # Validation
         model.eval()
         val_losses = []
 
@@ -81,7 +80,7 @@ def train_model(num_epochs: int = 50, batch_size: int = 32, learning_rate: float
 
                 x_hat, y_hat, p_fault = model(x_corrupt, m_miss, m_mask, flags)
 
-                l_rec = torch.tensor(0.0)  # No reconstruction loss in validation
+                l_rec = torch.tensor(0.0)  
                 l_pred = trainer.forecast_loss(y_hat, y_true)
                 l_fault = trainer.fault_loss(p_fault, y_fault)
 
@@ -91,3 +90,36 @@ def train_model(num_epochs: int = 50, batch_size: int = 32, learning_rate: float
                     'l_fault': l_fault.item(),
                     'total': (0.3 * l_pred + 0.2 * l_fault).item()
                 })
+        avg_val_losses = {
+            k: np.mean([loss[k] for loss in val_losses])
+            for k in val_losses[0].keys()
+        }
+
+        print(f"Epoch {epoch+1}/{num_epochs}")
+        print(f"Train - Total: {avg_train_losses['total']:.4f}, "
+              f"Rec: {avg_train_losses['l_rec']:.4f}, "
+              f"Pred: {avg_train_losses.get('l_pred', 0):.4f}, "
+              f"Fault: {avg_train_losses.get('l_fault', 0):.4f}")
+        print(f"Val   - Total: {avg_val_losses['total']:.4f}, "
+              f"Pred: {avg_val_losses['l_pred']:.4f}, "
+              f"Fault: {avg_val_losses['l_fault']:.4f}")
+
+        if avg_val_losses['total'] < best_val_loss:
+            best_val_loss = avg_val_losses['total']
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': trainer.optimizer.state_dict(),
+                'train_losses': avg_train_losses,
+                'val_losses': avg_val_losses,
+                'config': {
+                    'num_features': num_features,
+                    'num_regime_flags': num_regime_flags,
+                    'hidden_channels': hidden_channels,
+                    'num_tcn_layers': num_tcn_layers
+                }
+            }, save_path)
+            print(f"Saved best model to {save_path}")
+
+    print("Training completed")
+
