@@ -1,0 +1,7 @@
+# requirements.txt (pin harder if you want absolute deadline stability)
+numpy==2.4.0
+pandas==2.3.3
+pyarrow==22.0.0
+torch==2.9.1
+hydra-core==1.3.2
+omegaconf==2.3.0

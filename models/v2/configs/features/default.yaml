@@ -1,0 +1,56 @@
+# configs/features/default.yaml
+raw_channels:
+  - "Wind Speed"
+  - "Wind Direction"
+  - "Ambient Temperature"
+  - "Rotor Speed"
+  - "Generator Speed"
+  - "Generator Torque"
+  - "Active Power"
+  - "Reactive Power"
+  - "Blade Pitch Angle"
+  - "Gearbox Oil Temperature"
+  - "Generator Winding Temperature"
+  - "Generator Bearing Temperature"
+  - "Converter Temperatures"
+  - "Transformer Temperature"
+  - "Generator Current"
+  - "Voltage"
+  - "NacelleYaw"
+
+angular_channels:
+  - "Wind Direction"
+  - "Blade Pitch Angle"
+  - "NacelleYaw"
+
+angle_units: "deg"
+
+yaw_error:
+  enabled: true
+  wind_dir_col: "Wind Direction"
+  nacelle_yaw_col: "NacelleYaw"
+  output_name: "yaw_error"
+  wrap_range: "[-180,180)"
+
+deltas:
+  enabled: false
+  channels: []
+
+rolling:
+  enabled: false
+  windows: [3, 6]
+  stats: ["mean", "std"]
+  channels: []
+  causal: true
+
+fill_value_c: 0.0
+
+scaler:
+  type: "robust"
+  eps: 1.0e-6
+  clip_iqr: null
+  scale_sincos: false
+
+output_ordering:
+  explicit: false
+  feature_names: []

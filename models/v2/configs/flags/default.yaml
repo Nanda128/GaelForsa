@@ -1,0 +1,15 @@
+# configs/flags/default.yaml
+flag_names:
+  - "curtailment"
+  - "stop_start"
+  - "grid_event"
+
+sources:
+  type: "columns"
+  mapping:
+    curtailment: "curtailment"
+    stop_start: "stop_start"
+    grid_event: "grid_event"
+
+dtype: "float32"
+causal_alignment: true

@@ -1,0 +1,87 @@
+v2/                                      # Repo root
+  pyproject.toml                           # Packaging + tooling config (format/lint/test) and editable install support
+  requirements.txt                         # Minimal pinned deps for deadline stability (torch, pandas, hydra)
+  .gitignore                               # Ignore raw data, artifacts, logs, cache
+  LICENSE                                  # Competition-friendly licensing clarity (even if private)
+
+  configs/                                   # Single source of truth for ordering + hyperparams + masks + loss weights
+    config.yaml                                # Main config entry (defaults/overrides); defines experiment composition
+    data/                                      # Data I/O + windowing choices
+      default.yaml                               # Paths, Δt, L, K, turbine id fields, label rules, split rules
+    features/                                  # Feature engineering + scaling (defines F and ordering)
+      default.yaml                               # Which raw channels, which are angular, yaw_error, deltas, rollings, fill value c
+    flags/                                     # Regime/context flags (defines R and ordering)
+      default.yaml                               # Which flags exist and how they’re derived/loaded
+    model/                                     # Architecture choices
+      default.yaml                               # TCN D, kernel k, dilations/depth, heads, pooling/summary choices
+    train/                                     # Training behavior
+      default.yaml                               # p_mask, huber deltas, lambdas, optimizer/scheduler, batch sizes, epochs
+    infer/                                     # Inference + scoring behavior
+      default.yaml                               # p_score, aggregation definition, top-n feature contributions, output formats
+    experiments/                               # Named runs for fast iteration under deadline
+      baseline.yaml                              # Known-good baseline to avoid config drift
+      ablation_no_forecast.yaml                  # Optional: isolate reconstruction performance quickly
+      ablation_no_recon.yaml                     # Optional: isolate forecast/fault learning quickly
+
+  src/                                       # Importable package code (src-layout prevents import/path footguns)
+    scada_mttcn/                               # Actual Python package (pip install -e .)__init__.py                                # Version + package exports
+      config_schema.py                           # Typed config schema + validation (assert RF>=L, Fin formula, etc.)
+      registry.py                                # Feature/flag ordering registry + serialization with checkpoints
+      contracts.py                               # Tensor shape contracts and namedtuple/dataclass batch definitions
+
+    data/                                      # Everything that turns raw SCADA into (X, M_miss, Flags, Y_true, y)
+        __init__.py                              # Data subpackage exports
+        qc_align.py                              # Resample, dedupe, clamp, winsorize, build M_miss_raw
+        scalers.py                               # Robust scaler fit/transform (median/IQR) saved & loaded as artifact
+        features.py                              # Angle sin/cos, yaw_error wrap, deltas/rollings, build engineered M_miss
+        flags.py                                 # Build/load regime flags with causal alignment
+        windowing.py                             # Sliding window extraction for L and targets for K (and label alignment)
+        dataset.py                               # torch Dataset/DataLoader collate returning exactly the spec tensors
+
+    modeling/                                  # Pure model code: backbone + heads + forward signatures
+        __init__.py                              # Modeling exports
+        tcn.py                                   # Causal dilated residual TCN backbone with RF calculation
+        heads.py                                 # Recon head (D→F), forecast head (D→K·F), fault head (D→C)
+        multitask_tcn.py                         # Wrap backbone+heads; forward returns X_hat, Y_hat, p_fault
+
+    training/                                  # Train-time logic (two-stream + losses + logging)
+        __init__.py                              # Training exports
+        masking.py                               # Bernoulli masks constrained by M_miss and reproducible RNG handling
+        losses.py                                # Huber, CE/BCE, optional regime-aware weighting, reduction rules
+        step.py                                  # One “source of truth” train step that builds Stream A/B and total loss
+        trainer.py                               # Epoch loops, eval loops, checkpointing hooks (kept simple for deadline)
+
+    inference/                                 # Infer-time logic (clean outputs + mask-at-test scoring)
+        __init__.py                              # Inference exports
+        step.py                                  # One “source of truth” infer step building clean + scoring streams
+        scoring.py                               # E_rec calc, aggregation, per-feature contributions, top-n selection
+        alerting.py                               # Hysteresis + debounce state machine and alert outputs
+
+    evaluation/                                # Metrics and reporting that judges will ask for
+        __init__.py                              # Evaluation exports
+        metrics.py                               # Forecast error stats, fault AUROC/F1, anomaly PR curves if labels exist
+        reports.py                               # Lightweight JSON/CSV summaries + “top contributing sensors” examples
+
+    utils/                                     # Small shared utilities (not a junk drawer—keep it disciplined)
+        __init__.py                              # Utils exports
+        shapes.py                                # Centralized asserts for every tensor contract
+        seed.py                                  # Deterministic seeding for torch/numpy/random
+        io.py                                    # Save/load artifacts (scalers, registry, calibrations, checkpoints)
+        logging.py                               # Structured logging helpers (JSONL-friendly for ops/judging)
+
+  scripts/                                   # CLI entrypoints (thin wrappers that call src/ code)
+    prepare_data.py                            # Runs QC+features+flags to create processed datasets + scaler artifacts
+    train.py                                   # Runs two-stream training and writes checkpoints + registry + scalers snapshot
+    infer.py                                   # Produces p_fault, Y_hat, s_now, top features; writes outputs for demo/ops
+    evaluate.py                                # Generates competition-ready metrics + a small “RCA showcase” report
+
+  data/                                      # Local data workspace (never commit raw SCADA)
+    raw/                                       # Raw ingested exports (CSV/parquet/etc.)
+    interim/                                   # Post-QC aligned tables (optional)
+    processed/                                 # Final tensors/windows used by Dataset
+
+  artifacts/                                 # Run outputs (ignore in git; optionally keep small samples for demo)
+    scalers/                                   # Robust scaler params used for standardization
+    registries/                                # Feature/flag ordering snapshots tied to checkpoints
+    checkpoints/                               # Model weights + optimizer state
+    logs/                                      # TensorBoard/JSONL logs for debugging and judging

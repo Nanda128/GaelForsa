@@ -1,0 +1,19 @@
+# .gitignore
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/
+dist/
+build/
+*.egg-info/
+
+data/raw/
+data/interim/
+data/processed/
+artifacts/
+
+# editor
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,16 @@
+# configs/config.yaml
+defaults:
+  - data: default
+  - features: default
+  - flags: default
+
+experiment_name: "baseline"
+seed: 1337
+device: "cpu"
+output_dir: "artifacts"
+
+hydra:
+  job:
+    chdir: false
+  run:
+    dir: .

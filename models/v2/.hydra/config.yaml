@@ -1,0 +1,104 @@
+data:
+  paths:
+    raw_dir: data/raw
+    processed_dir: data/processed
+    interim_dir: data/interim
+  sampling:
+    dt_minutes: 10
+  windowing:
+    L: 144
+    K: 12
+    stride: 12
+  splits:
+    method: time
+    train_range:
+    - '2021-01-01'
+    - '2021-01-02'
+    val_range:
+    - '2021-01-03'
+    - '2021-01-03'
+    test_range:
+    - '2021-01-04'
+    - '2021-01-04 23:59:59'
+  identifiers:
+    turbine_id_col: turbine_id
+    time_col: timestamp
+  labels:
+    enabled: false
+    label_source: column
+    label_rule: window_any
+    class_names: []
+    multilabel: false
+  qc:
+    dedupe_rule: last
+    clamp: {}
+    winsorize: null
+features:
+  raw_channels:
+  - Wind Speed
+  - Wind Direction
+  - Ambient Temperature
+  - Rotor Speed
+  - Generator Speed
+  - Generator Torque
+  - Active Power
+  - Reactive Power
+  - Blade Pitch Angle
+  - Gearbox Oil Temperature
+  - Generator Winding Temperature
+  - Generator Bearing Temperature
+  - Converter Temperatures
+  - Transformer Temperature
+  - Generator Current
+  - Voltage
+  - NacelleYaw
+  angular_channels:
+  - Wind Direction
+  - Blade Pitch Angle
+  - NacelleYaw
+  angle_units: deg
+  yaw_error:
+    enabled: true
+    wind_dir_col: Wind Direction
+    nacelle_yaw_col: NacelleYaw
+    output_name: yaw_error
+    wrap_range: '[-180,180)'
+  deltas:
+    enabled: false
+    channels: []
+  rolling:
+    enabled: false
+    windows:
+    - 3
+    - 6
+    stats:
+    - mean
+    - std
+    channels: []
+    causal: true
+  fill_value_c: 0.0
+  scaler:
+    type: robust
+    eps: 1.0e-06
+    clip_iqr: null
+    scale_sincos: false
+  output_ordering:
+    explicit: false
+    feature_names: []
+flags:
+  flag_names:
+  - curtailment
+  - stop_start
+  - grid_event
+  sources:
+    type: columns
+    mapping:
+      curtailment: curtailment
+      stop_start: stop_start
+      grid_event: grid_event
+  dtype: float32
+  causal_alignment: true
+experiment_name: baseline
+seed: 1337
+device: cpu
+output_dir: artifacts
