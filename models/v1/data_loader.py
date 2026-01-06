@@ -111,9 +111,28 @@ class SCADADataLoader:
                 csv_files = [f for f in file_list if f.lower().endswith('.csv') and 'turbine_data' in f.lower()]
                 
                 if not csv_files:
-                    raise ValueError("No Turbine_Data CSV files found in zip")       
+                    raise ValueError("No Turbine_Data CSV files found in zip")
+                for csv_file in cvs_files:
+                    print(f"loading {csv_file} ....")
+                    with zip_ref.open(csv_file) as file:
+                        try:
+                            df = pd.read_csv(file, encoding='utf-8', low_memory=False, sep=',', quotechar='"', comment='#')
+                        except (UnicodeDecodeError, pd.errors.ParseError):
+                            try:
+                                df = pd.read_csv(file, encoding='latin1', low_memory=False, sep=',', quotechar='"', comment='#')
+                            except (UnicodeDecodeError, pd.errors.ParserError):
+                                df = pd.read_csv(file, encoding='cp1252', low_memory=False, sep=',', quotechar='"', comment='#')
+                    filename = os.path.basename(csv_file)
+                    turbine_match = filename.split('_')
+                    if len(turbine_match) >= 3 and turbine_match[2].isdigit():
+                        turbine_id = turbine_match[2]
+                        df['turbine_id'] = turbine_id
+
+                    all_dataframes.append(df)
                 
-                #load all data files
-                #get turbine id
+        else:
+            raise ValueError(f"Unsupported data path: {data_path}. Must be a directory or zip file.")
+        
+
                 #combine dataframes
                 #missing values timestamps faults...
