@@ -18,6 +18,7 @@ class Alert(models.Model):
     message = models.TextField()
     acknowledged = models.BooleanField(default=False)
     acknowledged_at = models.DateTimeField(null=True, blank=True)
+    is_dummy_data = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

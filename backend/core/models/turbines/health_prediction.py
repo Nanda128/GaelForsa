@@ -15,6 +15,7 @@ class HealthPrediction(models.Model):
     predicted_failure_window_end = models.DateTimeField(null=True, blank=True)
     model_version = models.CharField(max_length=50, blank=True)
     features_used = models.JSONField(default=dict, blank=True)
+    is_dummy_data = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-timestamp']
