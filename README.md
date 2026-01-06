@@ -24,11 +24,15 @@ cd frontend && npm install && npm run dev
 
 Then open http://localhost:3000 in your browser.
 
+**Optional commands**
+```bash
+python manage.py generate_test_data --turbines 10 # generate 10 turbines with 5 entries of each related model (alerts, maintaince, ect)
+python manage.py delete_test_data # used to delete test entries 
+
 ****
 
 Below is a list of the parameters we want to collect to support our system:
-
-... NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END IS NEVER THE END THE END IS NEVER THE END IS ...
+...TODO
 
 ****
 

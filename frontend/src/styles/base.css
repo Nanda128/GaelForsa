@@ -1,15 +1,80 @@
-/* Reset CSS */
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+:root {
+    --primary: #1e40af;
+    --primary-dark: #1e3a8a;
+    --primary-light: #3b82f6;
+    --secondary: #475569;
+    --success: #059669;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --info: #0284c7;
+    
+    --bg-primary: #ffffff;
+    --bg-secondary: #f1f5f9;
+    --bg-tertiary: #e2e8f0;
+    --bg-dark: #0f172a;
+    
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-tertiary: #64748b;
+    --text-light: #94a3b8;
+    
+    --border-light: #cbd5e1;
+    --border-medium: #94a3b8;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.2s ease;
+    --transition-slow: 0.3s ease;
+    
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+}
+
 html, body {
     height: 100%;
     width: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+code, pre, .monospace {
+    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
 }
 
 .visually-hidden {
@@ -23,4 +88,3 @@ html, body {
     white-space: nowrap;
     border: 0;
 }
-
