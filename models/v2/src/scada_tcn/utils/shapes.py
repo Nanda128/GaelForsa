@@ -1,4 +1,3 @@
-# src/scada_tcn/utils/shapes.py
 from __future__ import annotations
 
 from typing import Optional, Sequence

@@ -1,4 +1,3 @@
-# src/scada_tcn/data/__init__.py
 from .dataset import ScadaWindowDataset, collate_scada_batches, make_dataloaders
 from .features import build_features, encode_angle_sin_cos, wrap_angle_diff
 from .flags import build_flags

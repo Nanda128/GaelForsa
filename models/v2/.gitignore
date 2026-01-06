@@ -1,16 +1,13 @@
-# .gitignore
 __pycache__/
 *.pyc
 .pytest_cache/
 .ruff_cache/
 .venv/
+pyvenv.cfg
 dist/
 build/
 *.egg-info/
 
-data/raw/
-data/interim/
-data/processed/
 artifacts/
 
 # editor

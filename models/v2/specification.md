@@ -5,7 +5,7 @@ Scope: This document specifies responsibilities, public APIs, function signature
 
 ======================================================================
 A) GLOBAL CONVENTIONS (APPLY EVERYWHERE)
-========================================
+==================================================
 
 A.1 Tensor conventions (PyTorch)
 
@@ -1552,7 +1552,3 @@ L) NON-NEGOTIABLE INVARIANTS (ASSERT THESE EARLY AND OFTEN)
 - Inference reconstruction score uses mask-at-test with M_score in the M_mask slot.
 
 END OF SPEC
-
-start work on the above implementation by providing each file up until having all of the tensors set up and ready for training. Think extremely deeply about how this will interact with everything, keep it relatively simple and implementable in 1.5 months  - the entire project depends on you considering how the entire system you design will be specified, focus entirely on this single ask - do not provide derivations or normal output structure.
-
-you are to deeply reason about every aspect before beginning. also keep it relatively simple, i am a single person with a 1.5 month deadline for this project.
