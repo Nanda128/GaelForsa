@@ -46,6 +46,33 @@ class ResidualBlock(nn.Module):
 
         residual = self.residual_conv(x) if self.residual_conv else x
         return out + residual
+class TCNBackbone(nn.Module):
+    """
+    TCN backbone with dilated residual blocks.
+    """
+    def __init__(self, input_channels: int, hidden_channels: int, num_layers: int,
+                 Kernel_size: int = 3, dropout: float = 0.2):
+        super().__init__()
+        self.layers = nn.ModuleList()
+        for i in range(num_layers):
+            dilation = 2 ** i
+            in_ch = input_channels if i == 0 else hidden_channels
+            out_ch = hidden_channels
+
+            self.layers.append(
+                ResidualBlock(in_ch,  out_ch, kernel_size, dilation, dropout)
+            )
+    def forward(seld, x: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass through TCN layers.
+        Args:
+            x: Input tensor (B, F_in, L)
+        Returns:
+            Hidden representation (B, D, L)
+        """
+        for layer in self.layers
+            x = layer(x)
+        return x
 
 class ReconstructionHead(nn.Module):
     """
