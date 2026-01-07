@@ -91,3 +91,58 @@ class ReconstructionHead(nn.Module):
             Reconstructed features (B, F, L)
         """
         return self.conv(h)
+class ForecastHead(nn.Module):
+    """
+    Forecast head: predicts future features over horizon K.
+    """
+    def __init__(self, hidden_channels: int, output_channels: int, forecast_horizon: int):
+        super().__init__()
+        self.forecast_horizon = forecast_horizon
+        self.output_channels = output_channels
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_channels, hidden_channels // 2),
+            nn.ReLU(),
+            nn.Linear(hidden_channels // 2, forecast_horizon * output_channels)
+        )
+
+    def forward(self, h: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            h: Hidden representation (B, D, L)
+
+        Returns:
+            Forecast (B, K, F)
+        """
+        # Use last timestep
+        h_last = h[:, :, -1]  # (B, D)
+
+        # MLP to forecast
+        out = self.mlp(h_last)  # (B, K * F)
+
+        # Reshape to (B, K, F)
+        return out.view(-1, self.forecast_horizon, self.output_channels)
+
+
+class FaultHead(nn.Module):
+    """
+    Fault classification head.
+    """
+    def __init__(self, hidden_channels: int, num_classes: int):
+        super().__init__()
+        self.mlp = nn.Sequential(
+            nn.Linear(hidden_channels, hidden_channels // 2),
+            nn.ReLU(),
+            nn.Linear(hidden_channels // 2, num_classes)
+        )
+
+    def forward(self, h: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            h: Hidden representation (B, D, L)
+
+        Returns:
+            Fault probabilities (B, C)
+        """
+        h_pooled = torch.mean(h, dim=2)  # (B, D)
+        logits = self.mlp(h_pooled)  # (B, C)
+        return F.softmax(logits, dim=1)
