@@ -133,6 +133,165 @@ class SCADADataLoader:
         else:
             raise ValueError(f"Unsupported data path: {data_path}. Must be a directory or zip file.")
         
+        # Basic data cleaning
+        timestamp_cols = [col for col in combined_df.columns if 'time' in col.lower() or 'date' in col.lower()]
+        if timestamp_cols:
+            combined_df[timestamp_cols[0]] = pd.to_datetime(combined_df[timestamp_cols[0]], errors='coerce')
+            combined_df = combined_df.sort_values(timestamp_cols[0]).dropna(subset=[timestamp_cols[0]])
 
-                #combine dataframes
-                #missing values timestamps faults...
+        # Handle missing values
+        combined_df = combined_df.ffill().bfill()
+
+        print(f"Final dataframe: {combined_df.shape[0]} rows, {combined_df.shape[1]} columns")
+        print(f"Columns: {list(combined_df.columns)[:10]}...")  # Show first 10 columns
+
+        return combined_df
+
+    def preprocess_data(self):
+        """
+        Preprocess data - automatically detect features from real data
+        """
+        df = self.raw_data.copy()
+
+        timestamp_cols = [col for col in df.columns if 'time' in col.lower() or 'date' in col.lower()]
+        if timestamp_cols:
+            df[timestamp_cols[0]] = pd.to_datetime(df[timestamp_cols[0]], errors='coerce')
+            df = df.sort_values(timestamp_cols[0]).dropna(subset=[timestamp_cols[0]])
+
+        numeric_cols = df.select_dtypes(include=[np.number]).columns
+        exclude_patterns = ['id', 'index', 'timestamp', 'time', 'date']
+        feature_cols = [col for col in numeric_cols
+                       if not any(pattern in col.lower() for pattern in exclude_patterns)]
+
+        print(f"Using {len(feature_cols)} features: {feature_cols[:5]}...")
+
+        # Handle missing values
+        df[feature_cols] = df[feature_cols].ffill().bfill().fillna(0)
+
+        feature_data = df[feature_cols].values
+
+        m_miss = (~np.isnan(df[feature_cols].values)).astype(float)
+        X_standardized = self.scaler.fit_transform(feature_data)
+
+        #create synthetic regime flags (since real data might not have them)
+        n_samples = len(df)
+        flags = np.column_stack([
+            np.random.choice([0, 1], n_samples, p=[0.9, 0.1]),  # curtailment
+            np.random.choice([0, 1], n_samples, p=[0.95, 0.05]), # maintenance
+            np.random.choice([0, 1], n_samples, p=[0.98, 0.02])  # grid_event
+        ])
+
+        self.feature_columns = feature_cols
+        self.regime_columns = ['curtailment', 'maintenance', 'grid_event']
+
+        return X_standardized, m_miss, flags
+
+    def create_windows(self, X: np.ndarray, M_miss: np.ndarray, Flags: np.ndarray,
+                      window_length: int = 100, forecast_horizon: int = 6) -> List[Dict]:
+        """
+        Create sliding windows for training.
+
+        Args:
+            X: Standardized features (N, F)
+            M_miss: Missingness mask (N, F)
+            Flags: Regime flags (N, R)
+            window_length: L
+            forecast_horizon: K
+
+        Returns:
+            List of window dictionaries
+        """
+        windows = []
+        n_samples = len(X)
+
+        for i in range(window_length, n_samples - forecast_horizon):
+            x_window = X[i-window_length:i].T  # (F, L)
+            m_miss_window = M_miss[i-window_length:i].T  # (F, L)
+            flags_window = Flags[i-window_length:i].T  # (R, L)
+            y_true = X[i:i+forecast_horizon].T  # (F, K) -> will reshape to (K, F)
+            if 'fault_class' in self.raw_data.columns:
+                fault_label = self.raw_data.iloc[i]['fault_class']
+            else:
+                #synthetic fault labels
+                fault_label = np.random.choice([0, 1, 2, 3, 4], p=[0.8, 0.05, 0.05, 0.05, 0.05])
+
+            windows.append({
+                'x': x_window,
+                'm_miss': m_miss_window,
+                'flags': flags_window,
+                'y_true': y_true.T,  # (K, F)
+                'y_fault': fault_label
+            })
+
+        return windows
+
+
+class SCADADataset(Dataset):
+    """PyTorch Dataset for SCADA windows."""
+
+    def __init__(self, windows: List[Dict]):
+        self.windows = windows
+
+    def __len__(self):
+        return len(self.windows)
+
+    def __getitem__(self, idx):
+        window = self.windows[idx]
+
+        return {
+            'x': torch.FloatTensor(window['x']),
+            'm_miss': torch.FloatTensor(window['m_miss']),
+            'flags': torch.FloatTensor(window['flags']),
+            'y_true': torch.FloatTensor(window['y_true']),
+            'y_fault': torch.LongTensor([window['y_fault']])
+        }
+
+
+def create_data_loaders(data_path: str = '5841834', batch_size: int = 32,
+                       window_length: int = 100, forecast_horizon: int = 6,
+                       train_split: float = 0.7):
+    """
+    Create train/val DataLoaders.
+
+    Args:
+        data_path: Path to data zip
+        batch_size: Batch size
+        window_length: Input window length L
+        forecast_horizon: Forecast horizon K
+        train_split: Train/validation split ratio
+
+    Returns:
+        Tuple of (train_loader, val_loader)
+    """
+    # Load and preprocess data
+    loader = SCADADataLoader(data_path)
+    X, M_miss, Flags = loader.preprocess_data()
+
+    # Create windows
+    windows = loader.create_windows(X, M_miss, Flags, window_length, forecast_horizon)
+
+    # Split train/val
+    n_train = int(len(windows) * train_split)
+    train_windows = windows[:n_train]
+    val_windows = windows[n_train:]
+
+    # Create datasets
+    train_dataset = SCADADataset(train_windows)
+    val_dataset = SCADADataset(val_windows)
+
+    # Create dataloaders
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, val_loader
+
+
+if __name__ == "__main__":
+    train_loader, val_loader = create_data_loaders()
+
+    print(f"Train batches: {len(train_loader)}")
+    print(f"Val batches: {len(val_loader)}")
+    batch = next(iter(train_loader))
+    print(f"Batch x shape: {batch['x'].shape}")  # (B, F, L)
+    print(f"Batch flags shape: {batch['flags'].shape}")  # (B, R, L)
+    print(f"Batch y_true shape: {batch['y_true'].shape}")  # (B, K, F)
