@@ -266,20 +266,12 @@ def create_data_loaders(data_path: str = '5841834', batch_size: int = 32,
     # Load and preprocess data
     loader = SCADADataLoader(data_path)
     X, M_miss, Flags = loader.preprocess_data()
-
-    # Create windows
     windows = loader.create_windows(X, M_miss, Flags, window_length, forecast_horizon)
-
-    # Split train/val
     n_train = int(len(windows) * train_split)
     train_windows = windows[:n_train]
     val_windows = windows[n_train:]
-
-    # Create datasets
     train_dataset = SCADADataset(train_windows)
     val_dataset = SCADADataset(val_windows)
-
-    # Create dataloaders
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
