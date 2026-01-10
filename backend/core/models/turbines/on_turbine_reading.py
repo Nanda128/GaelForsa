@@ -15,6 +15,7 @@ class OnTurbineReading(models.Model):
     blade_pitch_angle = models.FloatField(null=True, blank=True)
     yaw_position = models.FloatField(null=True, blank=True)
     yaw_error = models.FloatField(null=True, blank=True)
+    is_dummy_data = models.BooleanField(default=False)
 
     class Meta:
         indexes = [

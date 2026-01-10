@@ -14,6 +14,7 @@ class WeatherReading(models.Model):
     air_temperature = models.FloatField(null=True, blank=True)
     air_humidity = models.FloatField(null=True, blank=True)
     lightning_strikes = models.IntegerField(default=0)
+    is_dummy_data = models.BooleanField(default=False)
 
     class Meta:
         indexes = [

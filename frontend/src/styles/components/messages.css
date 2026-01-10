@@ -1,28 +1,27 @@
-/* Styles for error and success messages */
-
 .error-message {
     position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #f8d7da;
-    color: #721c24;
-    padding: 12px 24px;
-    border-radius: 8px;
-    z-index: 1001;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    top: 80px;
+    right: var(--spacing-lg);
+    background: var(--danger);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 10000;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    max-width: 400px;
+    animation: slideIn 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.success-message {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #d4edda;
-    color: #155724;
-    padding: 12px 24px;
-    border-radius: 8px;
-    z-index: 1001;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
-

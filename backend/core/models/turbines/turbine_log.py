@@ -7,6 +7,7 @@ class TurbineLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     turbine = models.ForeignKey(Turbine, on_delete=models.CASCADE, related_name='logs')
     timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+    is_dummy_data = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-timestamp']

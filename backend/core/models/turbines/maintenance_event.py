@@ -22,6 +22,7 @@ class MaintenanceEvent(models.Model):
     description = models.TextField(blank=True)
     parts_replaced = models.TextField(blank=True)
     cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    is_dummy_data = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

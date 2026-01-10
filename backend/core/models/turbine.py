@@ -14,6 +14,7 @@ class Turbine(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='green')
+    is_dummy_data = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

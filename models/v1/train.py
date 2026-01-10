@@ -122,4 +122,58 @@ def train_model(num_epochs: int = 50, batch_size: int = 32, learning_rate: float
             print(f"Saved best model to {save_path}")
 
     print("Training completed")
+def load_and_test_model(model_path: str = 'scada_tcn_model.pth'):
+    """Load trained model and run inference test."""
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+    checkpoint = torch.load(model_path, map_location=device)
+
+    config = checkpoint['config']
+    model = SCADATCNModel(
+        num_features=config['num_features'],
+        num_regime_flags=config['num_regime_flags'],
+        hidden_channels=config['hidden_channels'],
+        num_tcn_layers=config['num_tcn_layers']
+    )
+    model.load_state_dict(checkpoint['model_state_dict'])
+    model.to(device)
+    model.eval()
+
+    trainer = SCADATCNTrainer(model, device)
+    _, test_loader = create_data_loaders(batch_size=1)
+    test_batch = next(iter(test_loader))
+    results = trainer.predict(
+        test_batch['x'], test_batch['m_miss'], test_batch['flags']
+    )
+
+    print("Inference test results:")
+    print(f"Reconstruction shape: {results['x_hat'].shape}")
+    print(f"Forecast shape: {results['y_hat'].shape}")
+    print(f"Fault probs shape: {results['p_fault'].shape}")
+    print(f"Top fault class: {torch.argmax(results['p_fault'], dim=1).item()}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Train SCADA TCN Model')
+    parser.add_argument('--epochs', type=int, default=50, help='Number of epochs')
+    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+    parser.add_argument('--lr', type=float, default=1e-3, help='Learning rate')
+    parser.add_argument('--hidden', type=int, default=64, help='Hidden channels')
+    parser.add_argument('--layers', type=int, default=4, help='TCN layers')
+    parser.add_argument('--save_path', type=str, default='scada_tcn_model.pth', help='Model save path')
+    parser.add_argument('--test', action='store_true', help='Run inference test instead of training')
+
+    args = parser.parse_args()
+
+    if args.test:
+        load_and_test_model(args.save_path)
+    else:
+        train_model(
+            num_epochs=args.epochs,
+            batch_size=args.batch_size,
+            learning_rate=args.lr,
+            hidden_channels=args.hidden,
+            num_tcn_layers=args.layers,
+            save_path=args.save_path
+        )
 
