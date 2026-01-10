@@ -8,7 +8,7 @@ os.makedirs(RAW_DIR, exist_ok=True)
 np.random.seed(0)
 
 turbines = ["T01", "T02"]
-start = pd.Timestamp("2021-01-01 00:00:00")
+start = pd.Timestamp("2019-01-01 00:00:00")
 n = 600
 dt = pd.Timedelta(minutes=10)
 ts = pd.date_range(start, periods=n, freq=dt)

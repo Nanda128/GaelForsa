@@ -12,14 +12,14 @@ data:
   splits:
     method: time
     train_range:
-    - '2021-01-01'
-    - '2021-01-02'
+    - '2019-01-01'
+    - '2020-12-31'
     val_range:
-    - '2021-01-03'
-    - '2021-01-03'
+    - '2021-01-01'
+    - '2021-06-30'
     test_range:
-    - '2021-01-04'
-    - '2021-01-04 23:59:59'
+    - '2021-07-01'
+    - '2021-12-31'
   identifiers:
     turbine_id_col: turbine_id
     time_col: timestamp

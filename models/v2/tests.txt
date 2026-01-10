@@ -8,4 +8,4 @@ python scripts/test_dataloader.py
 
 
 ## Detailed Pre-Training data correctness
-python scripts/test_semantics.py
+python scripts/test_data_semantics.py

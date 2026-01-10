@@ -110,17 +110,12 @@ hydra:
   output_subdir: .hydra
   overrides:
     hydra:
-    - hydra.job.chdir=false
-    - hydra.run.dir=.
     - hydra.mode=RUN
-    task:
-    - data.splits.train_range=["2021-01-01","2021-01-02"]
-    - data.splits.val_range=["2021-01-03","2021-01-03"]
-    - data.splits.test_range=["2021-01-04","2021-01-04 23:59:59"]
+    task: []
   job:
     name: prepare_data
     chdir: false
-    override_dirname: data.splits.test_range=["2021-01-04","2021-01-04 23:59:59"],data.splits.train_range=["2021-01-01","2021-01-02"],data.splits.val_range=["2021-01-03","2021-01-03"]
+    override_dirname: ''
     id: ???
     num: ???
     config_name: config
@@ -134,18 +129,18 @@ hydra:
   runtime:
     version: 1.3.2
     version_base: '1.3'
-    cwd: /home/leo/Desktop/Eirgrid Model/v2
+    cwd: /home/leo/Desktop/CleanerGrid/Repo/GaelForsa/models/v2
     config_sources:
     - path: hydra.conf
       schema: pkg
       provider: hydra
-    - path: /home/leo/Desktop/Eirgrid Model/v2/configs
+    - path: /home/leo/Desktop/CleanerGrid/Repo/GaelForsa/models/v2/configs
       schema: file
       provider: main
     - path: ''
       schema: structured
       provider: schema
-    output_dir: /home/leo/Desktop/Eirgrid Model/v2
+    output_dir: /home/leo/Desktop/CleanerGrid/Repo/GaelForsa/models/v2
     choices:
       flags: default
       features: default
