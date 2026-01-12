@@ -44,4 +44,3 @@ class OnTurbineReading(models.Model):
             models.Index(fields=['log']),
         ]
 
-

@@ -4,17 +4,17 @@ from django.db import models
 
 class Turbine(models.Model):
     STATUS_CHOICES = [
-        ('green', 'Healthy'),
-        ('yellow', 'Warning'),
-        ('red', 'Critical'),
+        ('operational', 'Operational'),
+        ('maintenance', 'Under Maintenance'),
+        ('fault', 'Fault'),
+        ('offline', 'Offline'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     latitude = models.FloatField()
     longitude = models.FloatField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='green')
-    is_dummy_data = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='operational')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -23,4 +23,5 @@ class Turbine(models.Model):
 
     def __str__(self):
         return self.name
+
 
