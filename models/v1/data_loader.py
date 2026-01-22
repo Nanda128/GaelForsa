@@ -112,7 +112,7 @@ class SCADADataLoader:
                 
                 if not csv_files:
                     raise ValueError("No Turbine_Data CSV files found in zip")
-                for csv_file in cvs_files:
+                for csv_file in csv_files:
                     print(f"loading {csv_file} ....")
                     with zip_ref.open(csv_file) as file:
                         try:
@@ -132,6 +132,12 @@ class SCADADataLoader:
                 
         else:
             raise ValueError(f"Unsupported data path: {data_path}. Must be a directory or zip file.")
+        
+        # Combine all dataframes
+        if not all_dataframes:
+            raise ValueError("No data loaded from files")
+        
+        combined_df = pd.concat(all_dataframes, ignore_index=True)
         
         # Basic data cleaning
         timestamp_cols = [col for col in combined_df.columns if 'time' in col.lower() or 'date' in col.lower()]

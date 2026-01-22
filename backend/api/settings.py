@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_yasg',
+    'django_celery_beat',  # For periodic tasks
     'core',
 ]
 
@@ -175,3 +176,12 @@ SWAGGER_SETTINGS = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True  # Would be restricted in a real-world production environment
+
+# Celery Configuration
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

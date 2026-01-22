@@ -51,7 +51,7 @@ class TCNBackbone(nn.Module):
     TCN backbone with dilated residual blocks.
     """
     def __init__(self, input_channels: int, hidden_channels: int, num_layers: int,
-                 Kernel_size: int = 3, dropout: float = 0.2):
+                 kernel_size: int = 3, dropout: float = 0.2):
         super().__init__()
         self.layers = nn.ModuleList()
         for i in range(num_layers):
@@ -60,9 +60,9 @@ class TCNBackbone(nn.Module):
             out_ch = hidden_channels
 
             self.layers.append(
-                ResidualBlock(in_ch,  out_ch, kernel_size, dilation, dropout)
+                ResidualBlock(in_ch, out_ch, kernel_size, dilation, dropout)
             )
-    def forward(seld, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass through TCN layers.
         Args:

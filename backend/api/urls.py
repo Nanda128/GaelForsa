@@ -16,6 +16,7 @@ from core.views.analytics import (
     farm_stats, farm_power_summary, farm_health_trends,
     farm_grid_impact, farm_economics
 )
+from core.views.realtime import receive_realtime_reading, trigger_prediction
 
 router = DefaultRouter()
 router.register(r'turbines', TurbineViewSet, basename='turbine')
@@ -37,6 +38,11 @@ analytics_urlpatterns = [
     path('api/v1/farm/health-trends/', farm_health_trends, name='farm-health-trends'),
     path('api/v1/farm/grid-impact/', farm_grid_impact, name='farm-grid-impact'),
     path('api/v1/farm/economics/', farm_economics, name='farm-economics'),
+]
+
+realtime_urlpatterns = [
+    path('api/v1/realtime/reading/', receive_realtime_reading, name='receive-realtime-reading'),
+    path('api/v1/realtime/logs/<uuid:log_id>/predict/', trigger_prediction, name='trigger-prediction'),
 ]
 
 schema_view = get_schema_view(
@@ -73,7 +79,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(router.urls)),
     path('map/', TemplateView.as_view(template_name='map.html'), name='map'),
-] + nested_urlpatterns + analytics_urlpatterns + [
+] + nested_urlpatterns + analytics_urlpatterns + realtime_urlpatterns + [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

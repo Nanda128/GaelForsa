@@ -40,7 +40,7 @@ class TurbineFaultPredictor:
             'operating_hours': np.random.exponential(100, n_samples).clip(10, 10000)
         }
 
-        df = pd.dataFrame(data)
+        df = pd.DataFrame(data)
         base_failure_days = 180  # Average 6 months
 
         risk_factor = (

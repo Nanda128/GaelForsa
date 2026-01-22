@@ -29,7 +29,7 @@ def train_model(num_epochs: int = 50, batch_size: int = 32, learning_rate: float
     )
 
 
-    sample_bath = next(iter(train_loader))
+    sample_batch = next(iter(train_loader))
     num_features = sample_batch['x'].shape[1]  # F
     num_regime_flags = sample_batch['flags'].shape[1]  # R
     num_fault_classes = 5  # C
