@@ -228,12 +228,15 @@ class SCADATCNTrainer:
         m_miss = batch_data['m_miss'].to(self.device)  # (B, F, L)
         flags = batch_data['flags'].to(self.device)  # (B, R, L)
         y_true = batch_data.get('y_true')  # (B, K, F)
-        y_fault = batch_data.get('y_fault')  # (B,)
+        y_fault = batch_data.get('y_fault')  # (B,) or (B,1)
 
         if y_true is not None:
             y_true = y_true.to(self.device)
         if y_fault is not None:
             y_fault = y_fault.to(self.device)
+            # Ensure target is 1D for CrossEntropyLoss
+            if y_fault.dim() > 1:
+                y_fault = y_fault.squeeze(-1)
 
         # Stream A: Masked reconstruction
         m_mask_a = self._sample_mask(m_miss, p_mask=0.15)  # 15% masking probability

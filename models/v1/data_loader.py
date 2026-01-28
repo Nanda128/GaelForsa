@@ -3,7 +3,7 @@ import numpy as np
 from typing import Tuple, Dict, List
 from sklearn.preprocessing import StandardScaler
 import torch
-from torch.utils.data import Dataset, Dataloader 
+from torch.utils.data import Dataset, DataLoader 
 
 class SCADADataLoader:
     def __init__(self, data_path: str = 'data'):

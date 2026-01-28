@@ -126,7 +126,7 @@ def load_and_test_model(model_path: str = 'scada_tcn_model.pth'):
     """Load trained model and run inference test."""
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    checkpoint = torch.load(model_path, map_location=device)
+    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
 
     config = checkpoint['config']
     model = SCADATCNModel(
