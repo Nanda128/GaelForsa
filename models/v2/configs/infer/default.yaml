@@ -1,0 +1,21 @@
+p_score: 0.15
+
+aggregation:
+  name: "masked_mean"
+  params: {}
+
+topn_features: 5
+
+calibration:
+  enabled: false
+  method: "percentile"
+  per_turbine: true
+  per_regime: true
+
+alerting:
+  hysteresis:
+    T_on: 3.0
+    T_off: 2.0
+  debounce:
+    N_on: 3
+    N_off: 3

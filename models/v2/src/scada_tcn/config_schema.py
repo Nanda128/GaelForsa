@@ -3,7 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from omegaconf import OmegaConf
+try:  # allow imports in stripped envs; scripts require omegaconf/hydra installed
+    from omegaconf import OmegaConf  # type: ignore
+except Exception:  # pragma: no cover
+    OmegaConf = None  # type: ignore
 
 
 @dataclass(frozen=True)
@@ -39,6 +42,33 @@ class FlagConfig:
 
 
 @dataclass(frozen=True)
+class ModelConfig:
+    tcn: dict[str, Any]
+    heads: dict[str, Any]
+    receptive_field_assert: dict[str, Any]
+
+
+@dataclass(frozen=True)
+class TrainConfig:
+    batch_size: int
+    epochs: int
+    log_every: int
+    p_mask: float
+    loss: dict[str, Any]
+    optimizer: dict[str, Any]
+    scheduler: Any
+
+
+@dataclass(frozen=True)
+class InferConfig:
+    p_score: float
+    aggregation: dict[str, Any]
+    topn_features: int
+    calibration: dict[str, Any]
+    alerting: dict[str, Any]
+
+
+@dataclass(frozen=True)
 class RootConfig:
     experiment_name: str
     seed: int
@@ -47,14 +77,24 @@ class RootConfig:
     data: DataConfig
     features: FeatureConfig
     flags: FlagConfig
+    model: ModelConfig
+    train: TrainConfig
+    infer: InferConfig
 
 
 def build_config(cfg: Any) -> RootConfig:
     if not isinstance(cfg, dict):
+        if OmegaConf is None:
+            raise ImportError("omegaconf is required to build config from a Hydra/OmegaConf object")
         cfg = OmegaConf.to_container(cfg, resolve=True)  # type: ignore[arg-type]
+
     data = DataConfig(**cfg["data"])
     features = FeatureConfig(**cfg["features"])
     flags = FlagConfig(**cfg["flags"])
+    model = ModelConfig(**cfg["model"])
+    train = TrainConfig(**cfg["train"])
+    infer = InferConfig(**cfg["infer"])
+
     rc = RootConfig(
         experiment_name=str(cfg.get("experiment_name", "exp")),
         seed=int(cfg.get("seed", 1337)),
@@ -63,12 +103,16 @@ def build_config(cfg: Any) -> RootConfig:
         data=data,
         features=features,
         flags=flags,
+        model=model,
+        train=train,
+        infer=infer,
     )
     validate_config(rc)
     return rc
 
 
 def validate_config(cfg: RootConfig) -> None:
+    # --- data/windowing ---
     L = int(cfg.data.windowing["L"])
     K = int(cfg.data.windowing.get("K", 0))
     stride = int(cfg.data.windowing.get("stride", 1))
@@ -79,9 +123,10 @@ def validate_config(cfg: RootConfig) -> None:
     if dt <= 0:
         raise ValueError(f"Invalid dt_minutes: {dt}")
 
+    # --- features ---
     raw = cfg.features.raw_channels
     ang = set(cfg.features.angular_channels)
-    if not set(ang).issubset(set(raw)):
+    if not ang.issubset(set(raw)):
         raise ValueError("angular_channels must be a subset of raw_channels")
 
     if cfg.features.angle_units not in ("deg", "rad"):
@@ -90,13 +135,47 @@ def validate_config(cfg: RootConfig) -> None:
     if float(cfg.features.scaler.get("eps", 1e-6)) <= 0:
         raise ValueError("features.scaler.eps must be > 0")
 
-    if not (0.0 <= float(cfg.features.fill_value_c) <= 10.0):
-        # in standardized space; wide but catches obvious nonsense
+    c = float(cfg.features.fill_value_c)
+    if not (-50.0 <= c <= 50.0):
         raise ValueError("features.fill_value_c looks wrong for standardized space")
+
+    # --- model heads vs tasks ---
+    heads = cfg.model.heads
+    recon_enabled = bool(heads.get("recon", {}).get("enabled", True))
+    forecast_enabled = bool(heads.get("forecast", {}).get("enabled", True))
+    fault_enabled = bool(heads.get("fault", {}).get("enabled", False))
+
+    if forecast_enabled and K <= 0:
+        raise ValueError("Forecast head enabled but K<=0")
+
+    # labels -> fault head consistency
+    labels_enabled = bool(cfg.data.labels.get("enabled", False))
+    if labels_enabled and not fault_enabled:
+        raise ValueError("labels.enabled=true but model.heads.fault.enabled=false")
+
+    # --- masking probs ---
+    p_mask = float(cfg.train.p_mask)
+    if recon_enabled and not (0.0 < p_mask < 1.0):
+        raise ValueError(f"train.p_mask must be in (0,1) when recon enabled; got {p_mask}")
+
+    p_score = float(cfg.infer.p_score)
+    if recon_enabled and not (0.0 < p_score < 1.0):
+        raise ValueError(f"infer.p_score must be in (0,1) when recon enabled; got {p_score}")
+
+    # --- receptive field assert ---
+    rf_cfg = cfg.model.receptive_field_assert or {}
+    if bool(rf_cfg.get("enabled", True)) and bool(rf_cfg.get("must_cover_L", True)):
+        from .modeling.tcn import receptive_field, resolve_dilations
+
+        tcn_cfg = dict(cfg.model.tcn)
+        dilations = resolve_dilations(tcn_cfg)
+        k = int(tcn_cfg.get("kernel_size", 3))
+        rf = receptive_field(kernel_size=k, dilations=dilations)
+        if rf < L:
+            raise ValueError(f"TCN receptive field too small: RF={rf} < L={L}")
 
 
 def resolved_feature_names(cfg: RootConfig) -> list[str]:
-    # Deterministic, minimal naming scheme; matches build_features() below.
     oc = cfg.features.output_ordering
     if bool(oc.get("explicit", False)):
         names = list(oc.get("feature_names", []))
@@ -117,7 +196,6 @@ def resolved_feature_names(cfg: RootConfig) -> list[str]:
     if bool(cfg.features.yaw_error.get("enabled", False)):
         names.append(str(cfg.features.yaw_error.get("output_name", "yaw_error")))
 
-    # Deltas and rolling add names based on already-engineered channel names.
     if bool(cfg.features.deltas.get("enabled", False)):
         for base in cfg.features.deltas.get("channels", []):
             names.append(f"{base}_delta")

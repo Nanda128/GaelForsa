@@ -6,26 +6,23 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from ..config_schema import FeatureConfig, RootConfig, resolved_feature_names
+from ..config_schema import FeatureConfig
 from ..registry import FeatureRegistry
 from .scalers import RobustScalerParams, transform_robust
 
 
 def wrap_angle_diff(a: pd.Series, b: pd.Series, units: str, wrap_range: str) -> pd.Series:
-    # output is wrapped scalar; keep NaN if either NaN
     diff = a - b
     if units == "deg":
         period = 360.0
         if wrap_range != "[-180,180)":
             raise ValueError(f"Unsupported wrap_range for deg: {wrap_range}")
-        wrapped = ((diff + 180.0) % period) - 180.0
-        return wrapped
+        return ((diff + 180.0) % period) - 180.0
     if units == "rad":
         period = 2.0 * math.pi
         if wrap_range != "[-pi,pi)":
             raise ValueError(f"Unsupported wrap_range for rad: {wrap_range}")
-        wrapped = ((diff + math.pi) % period) - math.pi
-        return wrapped
+        return ((diff + math.pi) % period) - math.pi
     raise ValueError(f"Unknown units: {units}")
 
 
@@ -36,36 +33,32 @@ def encode_angle_sin_cos(angle: pd.Series, units: str, prefix: str) -> pd.DataFr
         rad = angle.astype(float)
     else:
         raise ValueError(f"Unknown units: {units}")
+
     return pd.DataFrame(
-        {
-            f"{prefix}_sin": np.sin(rad),
-            f"{prefix}_cos": np.cos(rad),
-        },
+        {f"{prefix}_sin": np.sin(rad), f"{prefix}_cos": np.cos(rad)},
         index=angle.index,
     )
 
 
-def add_deltas(
-    df_X: pd.DataFrame,
-    df_M: pd.DataFrame,
-    channels: list[str],
-    group_levels: tuple[int, int] = (0, 1),
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    # assumes MultiIndex (turbine_id, timestamp)
+def add_deltas(df_X: pd.DataFrame, df_M: pd.DataFrame, channels: list[str]) -> tuple[pd.DataFrame, pd.DataFrame]:
     out_X = df_X.copy()
     out_M = df_M.copy()
+
     for ch in channels:
         if ch not in out_X.columns:
             raise ValueError(f"Delta base channel not found: {ch}")
+
         dname = f"{ch}_delta"
         g = out_X[ch].groupby(level=0, sort=False)
         delta = g.diff(1)
-        # present if current and prev are present
+
         mcur = out_M[ch].astype("uint8")
         mprev = mcur.groupby(level=0, sort=False).shift(1).fillna(0).astype("uint8")
         mp = (mcur & mprev).astype("uint8")
+
         out_X[dname] = delta
         out_M[dname] = mp
+
     return out_X, out_M
 
 
@@ -78,13 +71,15 @@ def add_rolling(
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     out_X = df_X.copy()
     out_M = df_M.copy()
+
     for ch in channels:
         if ch not in out_X.columns:
             raise ValueError(f"Rolling base channel not found: {ch}")
+
         for w in windows:
             if w <= 0:
                 raise ValueError(f"Invalid rolling window: {w}")
-            # strict present: require all points in window present
+
             m = out_M[ch].astype("uint8")
             present_count = (
                 m.groupby(level=0, sort=False)
@@ -96,6 +91,7 @@ def add_rolling(
 
             g = out_X[ch].groupby(level=0, sort=False)
             roll = g.rolling(window=w, min_periods=w)
+
             if "mean" in stats:
                 name = f"{ch}_roll{w}_mean"
                 out_X[name] = roll.mean().reset_index(level=0, drop=True)
@@ -104,6 +100,7 @@ def add_rolling(
                 name = f"{ch}_roll{w}_std"
                 out_X[name] = roll.std(ddof=0).reset_index(level=0, drop=True)
                 out_M[name] = m_roll
+
     return out_X, out_M
 
 
@@ -113,7 +110,7 @@ def build_features(
     cfg: FeatureConfig,
     scaler: Optional[RobustScalerParams],
     feature_registry: Optional[FeatureRegistry],
-    fill_missing: bool = True
+    fill_missing: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame, FeatureRegistry]:
     raw = list(cfg.raw_channels)
     ang = set(cfg.angular_channels)
@@ -124,7 +121,6 @@ def build_features(
     if not df_aligned.index.equals(df_miss_raw.index):
         raise ValueError("df_aligned and df_miss_raw must share identical index")
 
-    # Build engineered columns + engineered missingness (uint8)
     X_parts: list[pd.DataFrame] = []
     M_parts: list[pd.DataFrame] = []
 
@@ -141,20 +137,21 @@ def build_features(
     df_X = pd.concat(X_parts, axis=1)
     df_M = pd.concat(M_parts, axis=1).astype("uint8")
 
-    # yaw_error optional
     if bool(cfg.yaw_error.get("enabled", False)):
         wcol = str(cfg.yaw_error["wind_dir_col"])
         ycol = str(cfg.yaw_error["nacelle_yaw_col"])
         oname = str(cfg.yaw_error.get("output_name", "yaw_error"))
         wrap_range = str(cfg.yaw_error.get("wrap_range", "[-180,180)"))
+
         yaw_err = wrap_angle_diff(df_aligned[wcol], df_aligned[ycol], units=units, wrap_range=wrap_range)
         myaw = (df_miss_raw[wcol].astype("uint8") & df_miss_raw[ycol].astype("uint8")).astype("uint8")
+
         df_X[oname] = yaw_err
         df_M[oname] = myaw
 
-    # Optional deltas/rolling in engineered-space names
     if bool(cfg.deltas.get("enabled", False)):
         df_X, df_M = add_deltas(df_X, df_M, list(cfg.deltas.get("channels", [])))
+
     if bool(cfg.rolling.get("enabled", False)):
         if not bool(cfg.rolling.get("causal", True)):
             raise ValueError("rolling.causal must be true")
@@ -166,19 +163,16 @@ def build_features(
             stats=list(cfg.rolling.get("stats", [])),
         )
 
-    # Determine/validate ordering
     derived_names = list(df_X.columns)
     if feature_registry is None:
-        # enforce deterministic ordering via config-derived resolution
-        # (also catches accidental column drift)
-        # We approximate RootConfig-less resolution by using the derived order unless explicit config is set.
         if bool(cfg.output_ordering.get("explicit", False)):
             names = list(cfg.output_ordering.get("feature_names", []))
             if set(names) != set(derived_names):
                 raise ValueError("Explicit feature_names does not match engineered columns set")
             ordered = names
         else:
-            ordered = derived_names  # deterministic given raw_channels order + deterministic adds
+            ordered = derived_names
+
         feature_registry = FeatureRegistry(
             feature_names=ordered,
             raw_channel_names=raw,
@@ -191,24 +185,14 @@ def build_features(
     df_X = df_X[feature_registry.feature_names]
     df_M = df_M[feature_registry.feature_names].astype("uint8")
 
-    # Scaling: default do not scale sin/cos unless configured
     if scaler is not None:
-        scale_sincos = bool(cfg.scaler.get("scale_sincos", False))
-        sincos_cols = [c for c in df_X.columns if c.endswith("_sin") or c.endswith("_cos")]
-        if not scale_sincos:
-            numeric_cols = [c for c in scaler.feature_names if c not in sincos_cols]
-            # transform only numeric subset listed in scaler
-            tmp = df_X.copy()
-            if numeric_cols:
-                tmp[numeric_cols] = transform_robust(tmp[numeric_cols], scaler)[numeric_cols]
-            df_X = tmp
-        else:
-            df_X = transform_robust(df_X, scaler)
+        df_X = df_X.copy()
+        scale_cols = list(scaler.feature_names)
+        if scale_cols:
+            df_X[scale_cols] = transform_robust(df_X[scale_cols], scaler)[scale_cols]
 
-    # Fill missing values AFTER df_M computed
     if fill_missing:
         c = float(cfg.fill_value_c)
         df_X = df_X.where(df_M.astype(bool), other=c)
-
 
     return df_X.astype("float32"), df_M.astype("uint8"), feature_registry

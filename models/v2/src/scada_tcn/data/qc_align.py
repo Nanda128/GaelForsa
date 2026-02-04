@@ -29,10 +29,12 @@ def load_raw_tables(raw_dir: str, cfg: DataConfig) -> pd.DataFrame:
         dfs.append(df)
 
     df_raw = pd.concat(dfs, axis=0, ignore_index=True)
+
     tid = cfg.identifiers["turbine_id_col"]
     tcol = cfg.identifiers["time_col"]
     if tid not in df_raw.columns or tcol not in df_raw.columns:
         raise ValueError(f"Missing required columns: {tid}, {tcol}")
+
     df_raw[tcol] = pd.to_datetime(df_raw[tcol], errors="coerce")
     df_raw = df_raw.dropna(subset=[tcol])
     df_raw = df_raw.sort_values([tid, tcol]).reset_index(drop=True)
@@ -61,6 +63,7 @@ def winsorize_values(
             hi = out[col].quantile(float(q_hi))
             out[col] = out[col].clip(lower=lo, upper=hi)
         else:
+
             def _cap(g: pd.DataFrame) -> pd.DataFrame:
                 lo = g[col].quantile(float(q_lo))
                 hi = g[col].quantile(float(q_hi))
@@ -94,18 +97,30 @@ def run_qc_align(
     df_raw: pd.DataFrame,
     cfg: DataConfig,
     feature_cfg: FeatureConfig,
+    extra_cols: Optional[list[str]] = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Returns:
+      df_aligned: MultiIndex (turbine_id, timestamp), includes raw_channels + extra_cols
+      df_miss_raw: same index, raw_channels only, uint8 1 present, 0 missing
+    """
     tid = cfg.identifiers["turbine_id_col"]
     tcol = cfg.identifiers["time_col"]
     dt = int(cfg.sampling["dt_minutes"])
     raw_channels = list(feature_cfg.raw_channels)
 
-    needed_cols = [tid, tcol] + raw_channels
+    extra_cols = list(extra_cols or [])
+    extra_cols = [c for c in extra_cols if c not in raw_channels]
+
+    needed_cols = [tid, tcol] + raw_channels + extra_cols
     for c in needed_cols:
         if c not in df_raw.columns:
-            raise ValueError(f"Missing raw column: {c}")
+            # raw channels must exist; extras can be absent
+            if c in raw_channels:
+                raise ValueError(f"Missing raw column: {c}")
 
-    df = df_raw[needed_cols].copy()
+    keep_cols = [c for c in needed_cols if c in df_raw.columns]
+    df = df_raw[keep_cols].copy()
     df = _dedupe(df, tid, tcol, str(cfg.qc.get("dedupe_rule", "last")))
 
     clamp_map = cfg.qc.get("clamp") or {}
@@ -127,10 +142,23 @@ def run_qc_align(
         g = g.drop(columns=[tcol])
 
         rule = f"{dt}min"
-        # mean within bin; produces NaN if no data in bin
-        g_res = g[raw_channels].resample(rule).mean()
+        resample_cols = [c for c in raw_channels + extra_cols if c in g.columns]
 
-        miss = (~g_res.isna()).astype("uint8")
+        # raw channels: mean is typical; extra cols (flags) want max over bin
+        g_raw = g[[c for c in raw_channels if c in g.columns]].resample(rule).mean()
+        g_extra = None
+        if extra_cols:
+            present_extra = [c for c in extra_cols if c in g.columns]
+            if present_extra:
+                g_extra = g[present_extra].resample(rule).max()
+
+        if g_extra is not None:
+            g_res = pd.concat([g_raw, g_extra], axis=1)
+            g_res = g_res[resample_cols]
+        else:
+            g_res = g_raw
+
+        miss = (~g_res[raw_channels].isna()).astype("uint8")
         g_res.insert(0, tid, turbine_id)
         g_res.index.name = tcol
 
@@ -142,5 +170,4 @@ def run_qc_align(
 
     df_miss_raw = pd.concat(miss_frames, axis=0).sort_index()
     df_miss_raw = df_miss_raw[raw_channels].astype("uint8")
-
     return df_aligned, df_miss_raw

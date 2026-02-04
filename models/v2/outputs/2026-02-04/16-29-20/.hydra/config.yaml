@@ -1,9 +1,7 @@
 batch_size: 32
 epochs: 10
 log_every: 50
-
 p_mask: 0.15
-
 loss:
   huber_delta: 1.0
   lambdas:
@@ -12,12 +10,9 @@ loss:
     fault: 1.0
   regime_weighting:
     enabled: false
-    # If enabled: per-flag weights; uses MIN weight among active flags (conservative).
     weight_map: {}
-
 optimizer:
-  name: "adamw"
-  lr: 3.0e-4
-  weight_decay: 1.0e-4
-
+  name: adamw
+  lr: 0.0003
+  weight_decay: 0.0001
 scheduler: null
