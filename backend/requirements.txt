@@ -1,4 +1,4 @@
-Django>=6.0,<7.0
+Django>=5.0,<6.0
 djangorestframework>=3.14.0
 django-filter>=23.0
 drf-yasg>=1.21.0
