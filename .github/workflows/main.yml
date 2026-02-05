@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Cache pip
         uses: actions/cache@v4
@@ -62,7 +62,12 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci || npm install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Run tests
         working-directory: frontend
