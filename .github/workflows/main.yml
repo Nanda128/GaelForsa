@@ -36,7 +36,7 @@ jobs:
       - name: Import FastAPI app
         working-directory: backend
         env:
-          DATABASE_URL: postgresql+psycopg://localhost:5432/gaelforsa
+          DATABASE_URL: sqlite+pysqlite:///:memory:
         run: python -c "import main"
 
   # frontend-test:
