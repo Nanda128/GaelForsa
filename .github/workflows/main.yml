@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
   pull_request:
@@ -10,14 +11,18 @@ jobs:
   backend-test:
     name: Backend Checks (FastAPI)
     runs-on: ubuntu-latest
+
     steps:
+      # Checkout the repository
       - uses: actions/checkout@v4
 
+      # Setup Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.12'
 
+      # Cache pip
       - name: Cache pip
         uses: actions/cache@v4
         with:
@@ -25,6 +30,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
           restore-keys: ${{ runner.os }}-pip-
 
+      # Install dependencies
       - name: Install dependencies
         working-directory: backend
         env:
@@ -33,25 +39,27 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install -r requirements.txt --prefer-binary
 
+      # Import FastAPI app
       - name: Import FastAPI app
         working-directory: backend
         env:
           DATABASE_URL: sqlite+pysqlite:///:memory:
-        run: python -c "import main"
+        run: python -c 'import main' 
+  
 
   # frontend-test:
   #   name: Frontend Tests (Node)
   #   runs-on: ubuntu-latest
   #   steps:
   #     - uses: actions/checkout@v4
-
+  #
   #     - name: Set up Node.js
   #       uses: actions/setup-node@v4
   #       with:
   #         node-version: '20'
   #         cache: 'npm'
   #         cache-dependency-path: frontend/package-lock.json
-
+  #
   #     - name: Install dependencies
   #       working-directory: frontend
   #       run: |
@@ -60,11 +68,11 @@ jobs:
   #         else
   #           npm install
   #         fi
-
+  #
   #     - name: Run tests
   #       working-directory: frontend
   #       run: npm test
-
+  #
   #     - name: Build check
   #       working-directory: frontend
   #       run: npm run build --if-present
