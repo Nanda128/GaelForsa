@@ -11,6 +11,20 @@ jobs:
   backend-test:
     name: Backend Checks (FastAPI)
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gaelforsa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gaelforsa"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
 
     steps:
       # Checkout the repository
@@ -43,8 +57,8 @@ jobs:
       - name: Import FastAPI app
         working-directory: backend
         env:
-          DATABASE_URL: sqlite+pysqlite:///:memory:
-        run: python -c 'import main' 
+          DATABASE_URL: postgresql+psycopg://postgres:postgres@localhost:5432/gaelforsa
+        run: python -c 'import main'
   
 
   # frontend-test:
