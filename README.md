@@ -12,9 +12,17 @@ A stretch goal is to use weather conditions to determine the ideal time to send 
 
 Run these commands in **two separate terminals**:
 
-**Terminal 1 - Backend:**
+**Terminal 1 - Backend (Docker):**
 ```bash
-cd backend && python manage.py runserver
+cd backend
+docker compose up --build
+```
+
+Rebuild backend containers (if you made changes):
+```bash
+cd backend
+docker compose down -v
+docker compose up --build
 ```
 
 **Terminal 2 - Frontend:**
@@ -24,11 +32,8 @@ cd frontend && npm install && npm run dev
 
 Then open http://localhost:3000 in your browser.
 
-**Optional commands**
-```bash
-python manage.py generate_test_data --turbines 10 # generate 10 turbines with 5 entries of each related model (alerts, maintaince, ect)
-python manage.py delete_test_data # used to delete test entries 
-```
+Backend API docs:
+- Swagger UI: http://localhost:8000/docs
 ****
 
 Below is a list of the parameters we want to collect to support our system:
