@@ -13,7 +13,8 @@ import { VIEWS, INITIAL_STATUS_FILTERS, REFRESH_INTERVAL_MS } from './constants/
 
 function App() {
     const { turbines, loading, error, refreshTurbines } = useTurbines();
-    const [currentView, setCurrentView] = useState(VIEWS.MAP);
+    const [currentView, setCurrentView] = useState(VIEWS.DASHBOARD);
+const [isAppSidebarOpen, setIsAppSidebarOpen] = useState(true);
     const [selectedTurbine, setSelectedTurbine] = useState(null);
     const [showTurbineDetails, setShowTurbineDetails] = useState(false);
     const [statusFilters, setStatusFilters] = useState(INITIAL_STATUS_FILTERS);
@@ -112,8 +113,12 @@ function App() {
                 onDashboardClick={() => handleViewChange(VIEWS.DASHBOARD)}
                 onMapClick={() => handleViewChange(VIEWS.MAP)}
                 currentView={currentView}
+                onToggleSidebar={() => setIsAppSidebarOpen((o) => !o)}
+                isSidebarOpen={isAppSidebarOpen}
             />
-            {renderView()}
+            <main className="app-content">
+                {renderView()}
+            </main>
             {showTurbineDetails && selectedTurbine && (
                 <TurbineDetails
                     turbine={selectedTurbine}

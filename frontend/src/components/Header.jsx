@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-function Header({ turbines = [], onRefresh, onDashboardClick, onMapClick, currentView = 'map' }) {
+function Header({ turbines = [], onRefresh, onDashboardClick, onMapClick, currentView = 'map', onToggleSidebar, isSidebarOpen = true }) {
     const stats = useMemo(() => {
         const total = turbines.length;
         // const statusCounts = { green: 0, yellow: 0, red: 0 };
@@ -13,11 +13,20 @@ function Header({ turbines = [], onRefresh, onDashboardClick, onMapClick, curren
     }, [turbines]);
 
     return (
-        <header className="header">
+        <header className={`header ${isSidebarOpen ? '' : 'collapsed'}`} role="banner">
             <a href="#" className="header-logo" aria-label="GaelFórsa Home" onClick={(e) => { e.preventDefault(); onMapClick(); }}>
                 <div className="header-logo-icon">GF</div>
                 <span>GaelFórsa</span>
             </a>
+            <button
+                className="header-toggle"
+                onClick={() => onToggleSidebar?.()}
+                aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Open sidebar'}
+                aria-pressed={!!isSidebarOpen}
+                type="button"
+            >
+                <span className="toggle-icon" aria-hidden="true">{isSidebarOpen ? '‹' : '›'}</span>
+            </button>
             <nav className="header-nav">
                 <div className="header-stats">
                     <div className="stat-item">
