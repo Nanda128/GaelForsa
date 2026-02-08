@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import MapView from './components/MapView';
@@ -13,7 +14,8 @@ import { VIEWS, INITIAL_STATUS_FILTERS, REFRESH_INTERVAL_MS } from './constants/
 
 function App() {
     const { turbines, loading, error, refreshTurbines } = useTurbines();
-    const [currentView, setCurrentView] = useState(VIEWS.MAP);
+    const [currentView, setCurrentView] = useState(VIEWS.DASHBOARD);
+const [isAppSidebarOpen, setIsAppSidebarOpen] = useState(true);
     const [selectedTurbine, setSelectedTurbine] = useState(null);
     const [showTurbineDetails, setShowTurbineDetails] = useState(false);
     const [statusFilters, setStatusFilters] = useState(INITIAL_STATUS_FILTERS);
@@ -100,27 +102,33 @@ function App() {
     };
 
     return (
-        <div className="app">
-            <LoadingOverlay show={loading} />
-            <ErrorMessage 
-                message={errorMessage} 
-                onClose={handleCloseError}
-            />
-            <Header
-                turbines={turbines}
-                onRefresh={refreshTurbines}
-                onDashboardClick={() => handleViewChange(VIEWS.DASHBOARD)}
-                onMapClick={() => handleViewChange(VIEWS.MAP)}
-                currentView={currentView}
-            />
-            {renderView()}
-            {showTurbineDetails && selectedTurbine && (
-                <TurbineDetails
-                    turbine={selectedTurbine}
-                    onClose={handleCloseTurbineDetails}
+        <ThemeProvider>
+            <div className="app">
+                <LoadingOverlay show={loading} />
+                <ErrorMessage 
+                    message={errorMessage} 
+                    onClose={handleCloseError}
                 />
-            )}
-        </div>
+                <Header
+                    turbines={turbines}
+                    onRefresh={refreshTurbines}
+                    onDashboardClick={() => handleViewChange(VIEWS.DASHBOARD)}
+                    onMapClick={() => handleViewChange(VIEWS.MAP)}
+                    currentView={currentView}
+                    onToggleSidebar={() => setIsAppSidebarOpen((o) => !o)}
+                    isSidebarOpen={isAppSidebarOpen}
+                />
+                <main className="app-content">
+                    {renderView()}
+                </main>
+                {showTurbineDetails && selectedTurbine && (
+                    <TurbineDetails
+                        turbine={selectedTurbine}
+                        onClose={handleCloseTurbineDetails}
+                    />
+                )}
+            </div>
+        </ThemeProvider>
     );
 }
 
