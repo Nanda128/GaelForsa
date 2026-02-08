@@ -25,17 +25,17 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
                 criticalAlerts: farmStats.alerts.critical
             };
         }
-        
+
         // Fallback calculation
         const totalTurbines = turbines.length;
         const healthyCount = turbines.filter(t => t.status === 'green').length;
         const warningCount = turbines.filter(t => t.status === 'yellow').length;
         const criticalCount = turbines.filter(t => t.status === 'red').length;
         // const statusCounts = turbines.reduce((acc, t) => { acc[t.status] = (acc[t.status] || 0) + 1; return acc; }, {});
-        const healthPercentage = totalTurbines > 0 
+        const healthPercentage = totalTurbines > 0
             ? ((healthyCount / totalTurbines) * 100).toFixed(0)
             : 0;
-        
+
         return {
             totalTurbines,
             healthyCount,
@@ -93,8 +93,8 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
                 </Button>
             )}
             {farmStats && (
-                <Button 
-                    variant="secondary" 
+                <Button
+                    variant="secondary"
                     onClick={() => exportFarmStatsToCSV(farmStats)}
                     title="Export statistics to CSV"
                 >
@@ -102,8 +102,8 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
                 </Button>
             )}
             {powerChartData.length > 0 && (
-                <Button 
-                    variant="secondary" 
+                <Button
+                    variant="secondary"
                     onClick={() => exportPowerDataToCSV(powerData)}
                     title="Export power data to CSV"
                 >
@@ -148,7 +148,7 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
 
                     <div className="dashboard-cell dashboard-cell-square dashboard-cell-square-top-left dashboard-cell-square-span">
                         {healthTrends.length > 0 ? (
-                            <ChartPanel 
+                            <ChartPanel
                                 title="Health Trends"
                                 subtitle="30-day health score and failure risk"
                                 className="dashboard-chart-panel"
@@ -156,24 +156,24 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
                                 <ResponsiveContainer width="100%" height="100%" minHeight={160}>
                                     <LineChart data={healthTrends}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dashboard-chart-grid" />
-                                        <XAxis 
-                                            dataKey="date" 
-                                            angle={-45} 
-                                            textAnchor="end" 
+                                        <XAxis
+                                            dataKey="date"
+                                            angle={-45}
+                                            textAnchor="end"
                                             height={72}
                                             stroke="#64748b"
                                             tick={{ fontSize: 11 }}
                                             className="dashboard-chart-axis"
                                         />
-                                        <YAxis 
+                                        <YAxis
                                             stroke="#64748b"
                                             tick={{ fontSize: 11 }}
                                             label={{ value: '(%)', angle: -90, position: 'insideLeft', style: { fill: '#64748b', fontSize: 11 } }}
                                             className="dashboard-chart-axis"
                                         />
-                                        <Tooltip 
-                                            contentStyle={{ 
-                                                backgroundColor: '#ffffff', 
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: '#ffffff',
                                                 border: '1px solid #cbd5e1',
                                                 borderRadius: '8px',
                                                 fontSize: '12px'
@@ -181,20 +181,20 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
                                             wrapperClassName="dashboard-chart-tooltip"
                                         />
                                         <Legend wrapperStyle={{ fontSize: '11px' }} />
-                                        <Line 
-                                            type="monotone" 
-                                            dataKey="average_health_score" 
-                                            stroke="#10b981" 
+                                        <Line
+                                            type="monotone"
+                                            dataKey="average_health_score"
+                                            stroke="#10b981"
                                             strokeWidth={2}
-                                            name="Health (%)" 
+                                            name="Health (%)"
                                             dot={false}
                                         />
-                                        <Line 
-                                            type="monotone" 
-                                            dataKey="average_failure_probability" 
-                                            stroke="#ef4444" 
+                                        <Line
+                                            type="monotone"
+                                            dataKey="average_failure_probability"
+                                            stroke="#ef4444"
                                             strokeWidth={2}
-                                            name="Failure Risk (%)" 
+                                            name="Failure Risk (%)"
                                             dot={false}
                                         />
                                     </LineChart>
@@ -224,9 +224,9 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                         ))}
                                     </Pie>
-                                    <Tooltip 
-                                        contentStyle={{ 
-                                            backgroundColor: '#ffffff', 
+                                    <Tooltip
+                                        contentStyle={{
+                                            backgroundColor: '#ffffff',
                                             border: '1px solid #cbd5e1',
                                             borderRadius: '8px'
                                         }}
@@ -238,7 +238,7 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
 
                     <div className="dashboard-cell dashboard-cell-square dashboard-cell-square-bottom">
                         {powerChartData.length > 0 ? (
-                            <ChartPanel 
+                            <ChartPanel
                                 title="Power Output by Turbine"
                                 subtitle="Average and max power (kW)"
                                 className="dashboard-chart-panel"
@@ -246,24 +246,24 @@ function Dashboard({ turbines = [], onGridImpactClick, onEconomicsClick }) {
                                 <ResponsiveContainer width="100%" height="100%" minHeight={160}>
                                     <BarChart data={powerChartData}>
                                         <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dashboard-chart-grid" />
-                                        <XAxis 
-                                            dataKey="name" 
-                                            angle={-45} 
-                                            textAnchor="end" 
+                                        <XAxis
+                                            dataKey="name"
+                                            angle={-45}
+                                            textAnchor="end"
                                             height={72}
                                             stroke="#64748b"
                                             tick={{ fontSize: 11 }}
                                             className="dashboard-chart-axis"
                                         />
-                                        <YAxis 
+                                        <YAxis
                                             stroke="#64748b"
                                             tick={{ fontSize: 11 }}
                                             label={{ value: 'kW', angle: -90, position: 'insideLeft', style: { fill: '#64748b', fontSize: 11 } }}
                                             className="dashboard-chart-axis"
                                         />
-                                        <Tooltip 
-                                            contentStyle={{ 
-                                                backgroundColor: '#ffffff', 
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: '#ffffff',
                                                 border: '1px solid #cbd5e1',
                                                 borderRadius: '8px'
                                             }}
