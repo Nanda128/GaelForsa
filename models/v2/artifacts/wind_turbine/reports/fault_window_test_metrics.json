@@ -1,0 +1,21 @@
+{
+  "fault_acc_all_test_windows": 0.5525803310613437,
+  "fault_acc_fault_test_windows": 0.04275092936802974,
+  "fault_detect_recall_on_fault_test": 0.34014869888475835,
+  "fault_window_ratio": 0.2619279454722493,
+  "n_fault_test_windows": 538,
+  "n_labeled_windows": 2054,
+  "n_test_windows": 2054,
+  "test_label_hist": {
+    "0": 1516,
+    "2": 418,
+    "4": 95,
+    "9": 25
+  },
+  "test_label_hist_named": {
+    "electrical": 418,
+    "hydraulic": 95,
+    "normal": 1516,
+    "other_fault": 25
+  }
+}

@@ -52,6 +52,14 @@ def compute_fault_metrics(
             pred = np.argmax(lg, axis=1)
             out["accuracy"] = float(accuracy_score(yt, pred))
             out["f1_macro"] = float(f1_score(yt, pred, average="macro"))
+            out["n_samples"] = float(len(yt))
+
+            labels_present = sorted([int(x) for x in np.unique(yt)])
+            for c in labels_present:
+                mask = yt == c
+                if np.any(mask):
+                    out[f"acc_class_{c}"] = float(np.mean(pred[mask] == yt[mask]))
+                    out[f"support_class_{c}"] = float(np.sum(mask))
 
             # AUROC one-vs-rest if possible
             try:

@@ -51,6 +51,11 @@ class MultiTaskTCN(nn.Module):
         self.fault_enabled = bool(heads_cfg.get("fault", {}).get("enabled", False))
         self.multilabel = bool(heads_cfg.get("fault", {}).get("multilabel", False))
 
+        hz_days = list(heads_cfg.get("fault", {}).get("horizon_days", []))
+        include_normal = bool(heads_cfg.get("fault", {}).get("horizon_include_normal", False))
+        self.horizon_count = len(hz_days)
+        self.horizon_classes = int(C if include_normal else max(0, C - 1))
+
         self.recon_head = ReconHead(D, F) if self.recon_enabled else None
 
         if self.forecast_enabled:
@@ -63,7 +68,15 @@ class MultiTaskTCN(nn.Module):
         if self.fault_enabled:
             pooling = str(heads_cfg.get("fault", {}).get("pooling", "mean"))
             hidden = heads_cfg.get("fault", {}).get("hidden", None)
-            self.fault_head = FaultHead(D, C, pooling=pooling, multilabel=self.multilabel, hidden=hidden)
+            self.fault_head = FaultHead(
+                D,
+                C,
+                pooling=pooling,
+                multilabel=self.multilabel,
+                hidden=hidden,
+                horizon_count=self.horizon_count,
+                horizon_classes=self.horizon_classes,
+            )
         else:
             self.fault_head = None
 
@@ -82,9 +95,8 @@ class MultiTaskTCN(nn.Module):
             if (return_forecast and self.forecast_enabled and self.forecast_head is not None)
             else None
         )
-        p_fault = (
-            self.fault_head(H)
-            if (return_fault and self.fault_enabled and self.fault_head is not None)
-            else None
-        )
-        return ModelOutputs(X_hat=X_hat, Y_hat=Y_hat, p_fault=p_fault)
+        p_fault = None
+        p_fault_horizons = None
+        if return_fault and self.fault_enabled and self.fault_head is not None:
+            p_fault, p_fault_horizons = self.fault_head(H)
+        return ModelOutputs(X_hat=X_hat, Y_hat=Y_hat, p_fault=p_fault, p_fault_horizons=p_fault_horizons)

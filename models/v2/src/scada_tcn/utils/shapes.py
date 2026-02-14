@@ -83,3 +83,8 @@ def assert_contract_model_outputs(
         if out.p_fault is None:
             raise ValueError("fault enabled but out.p_fault is None")
         assert_shape(out.p_fault, (B, C), "out.p_fault")
+    if enabled.get("fault_horizons", False):
+        if out.p_fault_horizons is None:
+            raise ValueError("fault_horizons enabled but out.p_fault_horizons is None")
+        if out.p_fault_horizons.ndim != 3:
+            raise ValueError(f"out.p_fault_horizons.ndim expected 3 got {out.p_fault_horizons.ndim}")

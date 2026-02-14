@@ -7,8 +7,9 @@ pyvenv.cfg
 dist/
 build/
 *.egg-info/
-
-artifacts/
+f/
+lib/
+lib64
 
 # editor
 .vscode/

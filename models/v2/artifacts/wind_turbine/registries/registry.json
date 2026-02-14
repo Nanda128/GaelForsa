@@ -1,0 +1,36 @@
+{
+  "feature_registry": {
+    "angular_channel_names": [
+      "Wind Direction",
+      "Blade Pitch Angle"
+    ],
+    "engineered_version": "v1",
+    "feature_names": [
+      "Wind Speed",
+      "Wind Direction_sin",
+      "Wind Direction_cos",
+      "Ambient Temperature",
+      "Active Power",
+      "Blade Pitch Angle_sin",
+      "Blade Pitch Angle_cos",
+      "Converter Temperatures",
+      "Generator Current",
+      "Voltage"
+    ],
+    "raw_channel_names": [
+      "Wind Speed",
+      "Wind Direction",
+      "Ambient Temperature",
+      "Active Power",
+      "Blade Pitch Angle",
+      "Converter Temperatures",
+      "Generator Current",
+      "Voltage"
+    ]
+  },
+  "flag_registry": {
+    "flag_names": [],
+    "flags_version": "v1"
+  },
+  "schema_version": 1
+}

@@ -32,5 +32,6 @@ def per_feature_contribution(E_rec: torch.Tensor, M_score: torch.Tensor, eps: fl
 
 
 def top_contributors(contrib: torch.Tensor, topn: int) -> Tuple[torch.Tensor, torch.Tensor]:
-    vals, idx = torch.topk(contrib, k=int(topn), dim=-1, largest=True, sorted=True)
+    k = max(1, min(int(topn), int(contrib.shape[-1])))
+    vals, idx = torch.topk(contrib, k=k, dim=-1, largest=True, sorted=True)
     return idx, vals

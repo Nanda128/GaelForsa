@@ -1,0 +1,37 @@
+# configs/features/auto.yaml
+# Auto mode keeps a FIXED canonical SCADA contract (see scripts/prepare_data.py)
+# and only tries to map dataset columns into that schema.
+
+raw_channels: []          # empty => AUTO fixed canonical contract
+angular_channels: []      # ignored in AUTO; canonical angular set is enforced
+angle_units: "deg"
+
+yaw_error:
+  enabled: false          # AUTO will force-enable when building dataset-compatible config
+  wind_dir_col: "Wind Direction"
+  nacelle_yaw_col: "NacelleYaw"
+  output_name: "yaw_error"
+  wrap_range: "[-180,180)"
+
+deltas:
+  enabled: false
+  channels: []
+
+rolling:
+  enabled: false
+  windows: [3, 6]
+  stats: ["mean", "std"]
+  channels: []
+  causal: true
+
+fill_value_c: 0.0
+
+scaler:
+  type: "robust"
+  eps: 1.0e-6
+  clip_iqr: null
+  scale_sincos: false
+
+output_ordering:
+  explicit: false
+  feature_names: []

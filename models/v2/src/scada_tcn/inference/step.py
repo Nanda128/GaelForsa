@@ -7,7 +7,7 @@ import torch
 from ..contracts import InferBatch, InferStepOutputs, ModelOutputs
 from ..registry import FeatureRegistry, FlagRegistry
 from ..utils.shapes import assert_contract_infer_batch
-from ..modeling.multitask_tcn import MultiTaskTCN
+from ..modeling.multitask_tcn import MultiTaskTCN, predict_proba_fault
 from ..training.masking import apply_mask, build_model_input, sample_mask
 from .scoring import aggregate_score, compute_E_rec, per_feature_contribution, top_contributors
 
@@ -37,7 +37,17 @@ def infer_step(
         return_forecast=bool(cfg.model.heads.get("forecast", {}).get("enabled", True)),
         return_fault=bool(cfg.model.heads.get("fault", {}).get("enabled", False)),
     )
-    outputs = ModelOutputs(X_hat=None, Y_hat=out_I.Y_hat, p_fault=out_I.p_fault)
+    fault_logits = out_I.p_fault
+    fault_probs = None
+    if fault_logits is not None:
+        fault_probs = predict_proba_fault(
+            fault_logits,
+            multilabel=bool(cfg.model.heads.get("fault", {}).get("multilabel", False)),
+        )
+    fault_horizon_probs = None
+    if out_I.p_fault_horizons is not None:
+        fault_horizon_probs = torch.sigmoid(out_I.p_fault_horizons)
+    outputs = ModelOutputs(X_hat=None, Y_hat=out_I.Y_hat, p_fault=fault_probs, p_fault_horizons=fault_horizon_probs)
 
     # ---- scoring stream (mask-at-test) ----
     M_score = sample_mask(M_miss, p_mask=float(cfg.infer.p_score), generator=generator)
@@ -51,7 +61,7 @@ def infer_step(
     E_rec = compute_E_rec(X, out_S.X_hat, M_score)
     s_now = aggregate_score(E_rec, cfg.infer, M_score=M_score)
     contrib = per_feature_contribution(E_rec, M_score)
-    top_idx, _top_vals = top_contributors(contrib, int(cfg.infer.topn_features))
+    top_idx, top_vals = top_contributors(contrib, int(cfg.infer.topn_features))
 
     return InferStepOutputs(
         outputs=outputs,
@@ -60,5 +70,6 @@ def infer_step(
         top_idx=top_idx,
         debug={
             "masked_frac": float(((M_score < 0.5) & (M_miss > 0.5)).float().mean().item()),
+            "top_vals_mean": float(top_vals.mean().item()),
         },
     )

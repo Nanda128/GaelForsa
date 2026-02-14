@@ -1,61 +1,60 @@
 data:
   paths:
-    raw_dir: data/raw
-    processed_dir: data/processed
-    interim_dir: data/interim
+    raw_dir: temp_dataset
+    processed_dir: data/processed/wind_turbine
+    interim_dir: data/interim/wind_turbine
   sampling:
     dt_minutes: 10
   windowing:
     L: 144
     K: 12
-    stride: 12
+    stride: 144
   splits:
-    method: time
+    method: time_auto
     train_range:
-    - '2019-01-01'
-    - '2020-12-31'
+    - '2022-09-01'
+    - '2023-06-30'
     val_range:
-    - '2021-01-01'
-    - '2021-06-30'
+    - '2023-07-01'
+    - '2023-09-21'
     test_range:
-    - '2021-07-01'
-    - '2021-12-31'
+    - '2023-09-22'
+    - '2024-10-01'
+    ratios:
+    - 0.7
+    - 0.15
+    - 0.15
   identifiers:
     turbine_id_col: turbine_id
     time_col: timestamp
   labels:
-    enabled: false
+    enabled: true
     label_source: column
+    label_col: fault_label
     label_rule: window_any
-    class_names: []
+    class_names:
+    - normal
+    - mechanical
+    - electrical
+    - thermal
+    - hydraulic
+    - grid
+    - sensor
+    - control
+    - icing
+    - other_fault
     multilabel: false
+    horizon_days:
+    - 7
+    - 28
+    horizon_include_normal: false
   qc:
     dedupe_rule: last
     clamp: {}
     winsorize: null
 features:
-  raw_channels:
-  - Wind Speed
-  - Wind Direction
-  - Ambient Temperature
-  - Rotor Speed
-  - Generator Speed
-  - Generator Torque
-  - Active Power
-  - Reactive Power
-  - Blade Pitch Angle
-  - Gearbox Oil Temperature
-  - Generator Winding Temperature
-  - Generator Bearing Temperature
-  - Converter Temperatures
-  - Transformer Temperature
-  - Generator Current
-  - Voltage
-  - NacelleYaw
-  angular_channels:
-  - Wind Direction
-  - Blade Pitch Angle
-  - NacelleYaw
+  raw_channels: []
+  angular_channels: []
   angle_units: deg
   yaw_error:
     enabled: true
@@ -80,16 +79,13 @@ features:
   scaler:
     type: robust
     eps: 1.0e-06
-    clip_iqr: null
+    clip_iqr: 3.0
     scale_sincos: false
   output_ordering:
     explicit: false
     feature_names: []
 flags:
-  flag_names:
-  - curtailment
-  - stop_start
-  - grid_event
+  flag_names: []
   sources:
     type: columns
     mapping:
@@ -98,7 +94,108 @@ flags:
       grid_event: grid_event
   dtype: float32
   causal_alignment: true
-experiment_name: baseline
-seed: 1337
+model:
+  tcn:
+    D: 128
+    kernel_size: 3
+    num_blocks: 8
+    dilations: powers_of_two
+    dilation_list: []
+    dropout: 0.1
+    norm: weight_norm
+  heads:
+    recon:
+      enabled: true
+    forecast:
+      enabled: true
+      summary: last
+      hidden: 256
+    fault:
+      enabled: true
+      pooling: mean
+      C: 10
+      multilabel: false
+      hidden: 128
+      horizon_days:
+      - 7
+      - 28
+      horizon_include_normal: false
+  receptive_field_assert:
+    enabled: true
+    must_cover_L: true
+train:
+  batch_size: 256
+  epochs: 1
+  log_every: 5
+  p_mask: 0.15
+  loss:
+    huber_delta: 1.0
+    lambdas:
+      recon: 1.0
+      pred: 1.0
+      fault: 2.0
+      fault_horizons: 1.5
+    regime_weighting:
+      enabled: false
+      weight_map: {}
+  optimizer:
+    name: adamw
+    lr: 0.0001
+    weight_decay: 0.0001
+  scheduler: null
+  fault_balanced_sampling:
+    enabled: true
+    replacement: true
+    power: 1.0
+    strategy: binary_presence
+    max_class_weight_ratio: null
+infer:
+  p_score: 0.15
+  aggregation:
+    name: masked_mean
+    params: {}
+  topn_features: 10
+  calibration:
+    enabled: true
+    method: percentile
+    percentile: 0.995
+    per_turbine: true
+    per_regime: false
+  alerting:
+    hysteresis:
+      T_on: 2.5
+      T_off: 1.5
+    debounce:
+      N_on: 3
+      N_off: 5
+experiment_name: wind_turbine_baseline
+seed: 42
 device: cpu
-output_dir: artifacts
+output_dir: artifacts/wind_turbine
+debug:
+  log_tensor_stats: true
+  log_feature_missing_topn: 10
+  log_mask_stats: true
+  log_grad_norm: true
+  trace_activations: false
+  trace_every: 200
+  detect_anomaly: false
+batch_size: 256
+epochs: 1
+log_every: 5
+p_mask: 0.15
+loss:
+  huber_delta: 1.0
+  lambdas:
+    recon: 1.0
+    pred: 1.0
+    fault: 1.0
+    fault_horizons: 1.0
+  regime_weighting:
+    enabled: false
+    weight_map: {}
+optimizer:
+  name: adamw
+  lr: 0.0003
+  weight_decay: 0.0001
+scheduler: null

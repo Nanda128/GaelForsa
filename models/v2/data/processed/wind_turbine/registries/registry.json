@@ -1,0 +1,57 @@
+{
+  "feature_registry": {
+    "angular_channel_names": [
+      "Wind Direction",
+      "Blade Pitch Angle",
+      "NacelleYaw"
+    ],
+    "engineered_version": "v1",
+    "feature_names": [
+      "Wind Speed",
+      "Wind Direction_sin",
+      "Wind Direction_cos",
+      "Ambient Temperature",
+      "Rotor Speed",
+      "Generator Speed",
+      "Generator Torque",
+      "Active Power",
+      "Reactive Power",
+      "Blade Pitch Angle_sin",
+      "Blade Pitch Angle_cos",
+      "Gearbox Oil Temperature",
+      "Generator Winding Temperature",
+      "Generator Bearing Temperature",
+      "Converter Temperatures",
+      "Transformer Temperature",
+      "Generator Current",
+      "Voltage",
+      "NacelleYaw_sin",
+      "NacelleYaw_cos",
+      "yaw_error"
+    ],
+    "raw_channel_names": [
+      "Wind Speed",
+      "Wind Direction",
+      "Ambient Temperature",
+      "Rotor Speed",
+      "Generator Speed",
+      "Generator Torque",
+      "Active Power",
+      "Reactive Power",
+      "Blade Pitch Angle",
+      "Gearbox Oil Temperature",
+      "Generator Winding Temperature",
+      "Generator Bearing Temperature",
+      "Converter Temperatures",
+      "Transformer Temperature",
+      "Generator Current",
+      "Voltage",
+      "NacelleYaw"
+    ]
+  },
+  "flag_registry": {
+    "flag_names": [],
+    "flags_version": "v1"
+  },
+  "schema_version": 1
+}

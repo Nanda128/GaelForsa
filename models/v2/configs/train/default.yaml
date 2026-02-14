@@ -1,0 +1,33 @@
+batch_size: 256
+epochs: 1
+log_every: 5
+
+p_mask: 0.15
+
+loss:
+  huber_delta: 1.0
+  lambdas:
+    recon: 1.0
+    pred: 1.0
+    fault: 1.0
+    fault_horizons: 1.0
+  regime_weighting:
+    enabled: false
+    # If enabled: per-flag weights; uses MIN weight among active flags (conservative).
+    weight_map: {}
+
+optimizer:
+  name: "adamw"
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+
+scheduler: null
+
+fault_balanced_sampling:
+  enabled: true
+  replacement: true
+  # Higher values upweight minority classes more strongly.
+  power: 1.0
+  strategy: "binary_presence"
+  # Set to null to disable clipping and preserve balancing strength.
+  max_class_weight_ratio: null

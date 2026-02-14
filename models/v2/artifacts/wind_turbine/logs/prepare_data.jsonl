@@ -1,0 +1,66 @@
+{"ts": "2026-02-06T16:06:35.019535", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T16:06:36.134700", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T16:28:20.253169", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T16:28:21.296880", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T16:28:54.059233", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T16:28:55.114651", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T16:37:11.628240", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T16:37:12.696706", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T17:06:01.636975", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T17:06:02.715606", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T17:14:23.969876", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T17:14:25.040925", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T19:35:54.185720", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T19:35:55.268738", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T20:59:47.398963", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T20:59:48.479142", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:07:13.832619", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T21:07:14.835177", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:08:59.247996", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 67}
+{"ts": "2026-02-06T21:09:00.293329", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 67, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:36:32.295734", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:36:33.315388", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:44:40.617721", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:44:41.530287", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:45:39.768154", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:45:40.680954", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:48:35.104584", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:48:36.054828", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:51:25.492441", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:51:26.417977", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:53:24.670350", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:53:25.601593", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:54:12.102918", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:54:13.030857", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-06T21:54:44.061729", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-06T21:54:44.974056", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6986, "windows_val": 1621, "windows_test": 106, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-09T20:49:06.146788", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-09T20:49:07.011738", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6319, "windows_val": 1353, "windows_test": 1356, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-09T20:54:22.111639", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-09T20:54:22.999310", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6319, "windows_val": 1353, "windows_test": 1356, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-09T21:03:01.755243", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 63}
+{"ts": "2026-02-09T21:03:02.639795", "level": "INFO", "rows_raw": 108288, "rows_aligned": 108632, "F": 63, "R": 0, "windows_total": 9028, "windows_train": 6319, "windows_val": 1353, "windows_test": 1356, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-09T21:08:45.397379", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 70}
+{"ts": "2026-02-09T21:08:49.381368", "level": "INFO", "rows_raw": 1305035, "rows_aligned": 429162, "F": 70, "R": 0, "windows_total": 35701, "windows_train": 24988, "windows_val": 5353, "windows_test": 5360, "features_mode": "auto", "step": 0}
+{"ts": "2026-02-09T21:29:21.836251", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 70}
+{"ts": "2026-02-09T21:29:25.018714", "level": "WARNING", "msg": "labels.enabled=true but label column is missing", "label_col": "anomaly"}
+{"ts": "2026-02-09T21:29:25.656640", "level": "INFO", "rows_raw": 1305035, "rows_aligned": 429162, "F": 70, "R": 0, "windows_total": 35701, "windows_train": 24988, "windows_val": 5353, "windows_test": 5360, "features_mode": "auto", "labels_enabled": false, "labels_positive_frac": 0.0, "step": 0}
+{"ts": "2026-02-09T21:35:19.591444", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 46}
+{"ts": "2026-02-09T21:35:22.056756", "level": "WARNING", "msg": "labels.enabled=true but label column is missing", "label_col": "anomaly"}
+{"ts": "2026-02-09T21:35:22.621741", "level": "INFO", "rows_raw": 1196747, "rows_aligned": 429162, "F": 46, "R": 0, "windows_total": 35701, "windows_train": 24988, "windows_val": 5353, "windows_test": 5360, "features_mode": "auto", "labels_enabled": false, "labels_positive_frac": 0.0, "step": 0}
+{"ts": "2026-02-09T21:42:46.219477", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 46}
+{"ts": "2026-02-09T21:42:48.190542", "level": "WARNING", "msg": "labels.enabled=true but label column is missing", "label_col": "anomaly"}
+{"ts": "2026-02-09T21:42:48.763922", "level": "INFO", "rows_raw": 1196747, "rows_aligned": 429162, "F": 46, "R": 0, "windows_total": 35701, "windows_train": 24988, "windows_val": 5353, "windows_test": 5360, "features_mode": "auto", "labels_enabled": false, "labels_positive_frac": 0.0, "step": 0}
+{"ts": "2026-02-09T21:47:17.641828", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 46}
+{"ts": "2026-02-09T21:47:19.405240", "level": "WARNING", "msg": "labels.enabled=true but label column is missing", "label_col": "anomaly"}
+{"ts": "2026-02-09T21:47:19.929401", "level": "INFO", "rows_raw": 1196747, "rows_aligned": 429162, "F": 46, "R": 0, "windows_total": 35646, "windows_train": 24951, "windows_val": 5344, "windows_test": 5351, "features_mode": "auto", "labels_enabled": false, "labels_positive_frac": 0.0, "step": 0}
+{"ts": "2026-02-09T21:49:25.041703", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 46}
+{"ts": "2026-02-09T21:49:26.798300", "level": "WARNING", "msg": "labels.enabled=true but label column is missing", "label_col": "anomaly"}
+{"ts": "2026-02-09T21:49:27.339132", "level": "INFO", "rows_raw": 1196747, "rows_aligned": 429162, "F": 46, "R": 0, "windows_total": 35646, "windows_train": 24951, "windows_val": 5344, "windows_test": 5351, "features_mode": "auto", "labels_enabled": false, "labels_positive_frac": 0.0, "step": 0}
+{"ts": "2026-02-09T21:53:00.944349", "level": "INFO", "msg": "AUTO raw_channels selected", "count": 46}
+{"ts": "2026-02-09T21:53:02.739051", "level": "WARNING", "msg": "labels.enabled=true but label column is missing", "label_col": "anomaly"}
+{"ts": "2026-02-09T21:53:03.281088", "level": "INFO", "rows_raw": 1196747, "rows_aligned": 429162, "F": 46, "R": 0, "windows_total": 35701, "windows_train": 24988, "windows_val": 5353, "windows_test": 5360, "features_mode": "auto", "labels_enabled": false, "labels_positive_frac": 0.0, "step": 0}
+{"ts": "2026-02-10T13:58:03.811043", "level": "INFO", "msg": "AUTO canonical raw_channels selected", "count": 8, "selected": ["Wind Speed", "Wind Direction", "Ambient Temperature", "Active Power", "Blade Pitch Angle", "Converter Temperatures", "Generator Current", "Voltage"], "missing_spec": ["Rotor Speed", "Generator Speed", "Generator Torque", "Reactive Power", "Gearbox Oil Temperature", "Generator Winding Temperature", "Generator Bearing Temperature", "Transformer Temperature", "NacelleYaw"], "dropped_non_spec_count": 27}
+{"ts": "2026-02-10T13:58:03.821846", "level": "INFO", "msg": "Dropping angular_channels not in raw_channels", "dropped": ["NacelleYaw"]}
+{"ts": "2026-02-10T13:58:03.822013", "level": "INFO", "msg": "Disabling yaw_error because required cols are missing in dataset", "wind_dir_col": "Wind Direction", "nacelle_yaw_col": "NacelleYaw"}
+{"ts": "2026-02-10T13:58:27.819902", "level": "INFO", "rows_raw": 1196747, "rows_aligned": 429162, "F": 10, "R": 0, "windows_total": 35701, "windows_train": 24988, "windows_val": 5353, "windows_test": 5360, "features_mode": "auto", "labels_enabled": true, "labels_positive_frac": 0.0, "step": 0}

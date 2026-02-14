@@ -1,0 +1,55 @@
+sensor_name;statistics_type;description;unit;is_angle;is_counter
+sensor_0;average;Ambient temperature;�C;False;False
+sensor_1;average;Wind absolute direction;�;True;False
+sensor_2;average;Wind relative direction;�;True;False
+wind_speed_3;maximum,minimum,average,std_dev;Windspeed;m/s;False;False
+wind_speed_4;average;Estimated windspeed;m/s;False;False
+sensor_5;maximum,minimum,std_dev,average;Pitch angle;�;True;False
+sensor_6;average;Temperature in the hub controller;�C;False;False
+sensor_7;average;Temperature in the top nacelle controller;�C;False;False
+sensor_8;average;Temperature in the choke coils on the VCS-section;�C;False;False
+sensor_9;average;Temperature on the VCP-board;�C;False;False
+sensor_10;average;Temperature in the VCS cooling water;�C;False;False
+sensor_11;average;Temperature in gearbox bearing on high speed shaft;�C;False;False
+sensor_12;average;Temperature oil in gearbox;�C;False;False
+sensor_13;average;Temperature in generator bearing 2 (Drive End);�C;False;False
+sensor_14;average;Temperature in generator bearing 1 (Non-Drive End);�C;False;False
+sensor_15;average;Temperature inside generator in stator windings phase 1;�C;False;False
+sensor_16;average;Temperature inside generator in stator windings phase 2;�C;False;False
+sensor_17;average;Temperature inside generator in stator windings phase 3;�C;False;False
+sensor_18;maximum,minimum,average,std_dev;Generator rpm in latest period;rpm;False;False
+sensor_19;average;Temperature in the split ring chamber;�C;False;False
+sensor_20;average;Temperature in the busbar section;�C;False;False
+sensor_21;average;Temperature measured by the IGBT-driver on the grid side inverter;�C;False;False
+sensor_22;average;Actual phase displacement;;False;False
+sensor_23;average;Averaged current in phase 1;A;False;False
+sensor_24;average;Averaged current in phase 2;A;False;False
+sensor_25;average;Averaged current in phase 3;A;False;False
+sensor_26;average;Grid frequency;Hz;False;False
+reactive_power_27;average,maximum,minimum,std_dev;Possible grid capacitive reactive power;kVAr;False;False
+reactive_power_28;average,maximum,minimum,std_dev;Possible grid inductive reactive power;kVAr;False;False
+power_29;maximum,std_dev,average,minimum;Possible grid active power;kW;False;False
+power_30;maximum,std_dev,minimum,average;Grid power;kW;False;False
+sensor_31;average,maximum,minimum,std_dev;Grid reactive power;kVAr;False;False
+sensor_32;average;Averaged voltage in phase 1;V;False;False
+sensor_33;average;Averaged voltage in phase 2;V;False;False
+sensor_34;average;Averaged voltage in phase 3;V;False;False
+sensor_35;average;Temperature measured by the IGBT-driver on the rotor side inverter phase1;�C;False;False
+sensor_36;average;Temperature measured by the IGBT-driver on the rotor side inverter phase2;�C;False;False
+sensor_37;average;Temperature measured by the IGBT-driver on the rotor side inverter phase3;�C;False;False
+sensor_38;average;Temperature in HV transformer phase L1;�C;False;False
+sensor_39;average;Temperature in HV transformer phase L2;�C;False;False
+sensor_40;average;Temperature in HV transformer phase L3;�C;False;False
+sensor_41;average;Temperature oil in hydraulic group;�C;False;False
+sensor_42;average;Nacelle direction;�;True;False
+sensor_43;average;Nacelle temperature;�C;False;False
+sensor_44;average;Active power - generator disconnected;Wh;False;False
+sensor_45;average;Active power - generator connected in delta;Wh;False;False
+sensor_46;average;Active power - generator connected in star;Wh;False;False
+sensor_47;average;Reactive power - generator disconnected;VArh;False;False
+sensor_48;average;Reactive power - generator connected in delta;VArh;False;False
+sensor_49;average;Reactive power - generator connected in star;VArh;False;False
+sensor_50;average;Total active power;Wh;False;False
+sensor_51;average;Total reactive power;VArh;False;False
+sensor_52;minimum,average,std_dev,maximum;Rotor rpm;rpm;False;False
+sensor_53;average;Temperature in the nose cone;�C;False;False

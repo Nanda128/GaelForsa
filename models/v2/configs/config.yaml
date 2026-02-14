@@ -1,7 +1,31 @@
-batch_size: 32
-epochs: 10
-log_every: 50
+defaults:
+  - data: default
+  - features: auto
+  - flags: default
+  - model: default
+  - train: default
+  - infer: default
+  - experiments: 1A
+  - _self_
 
+debug:
+  log_tensor_stats: true
+  log_feature_missing_topn: 10
+  log_mask_stats: true
+  log_grad_norm: true
+  trace_activations: false
+  trace_every: 200
+  detect_anomaly: false
+
+hydra:
+  job:
+    chdir: false
+  run:
+    dir: .
+
+batch_size: 256
+epochs: 1
+log_every: 5
 p_mask: 0.15
 
 loss:
@@ -10,6 +34,7 @@ loss:
     recon: 1.0
     pred: 1.0
     fault: 1.0
+    fault_horizons: 1.0
   regime_weighting:
     enabled: false
     # If enabled: per-flag weights; uses MIN weight among active flags (conservative).
@@ -21,3 +46,4 @@ optimizer:
   weight_decay: 1.0e-4
 
 scheduler: null
+

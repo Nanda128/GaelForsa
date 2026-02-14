@@ -1,0 +1,158 @@
+# @package _global_
+
+defaults:
+  - override /data: default
+  - override /features: auto
+  - override /flags: default
+  - override /model: default
+  - override /train: default
+  - override /infer: default
+
+experiment_name: "wind_turbine_baseline"
+seed: 42
+device: "cpu"  # set cpu for non-GPU environments
+output_dir: "artifacts/wind_turbine"
+
+data:
+  paths:
+    raw_dir: "temp_dataset"
+    processed_dir: "data/processed/wind_turbine"
+    interim_dir: "data/interim/wind_turbine"
+  
+  sampling:
+    dt_minutes: 10  # Data appears to be 10-minute resolution
+  
+  windowing:
+    L: 144  # 24 hours at 10-min resolution
+    K: 12   # 12 = 2 hours forecast horizon
+    stride: 144  # 24-hour stride between windows (faster end-to-end pipeline checks)
+  
+  splits:
+    method: "time_auto"
+    train_range: ["2022-09-01", "2023-06-30"]
+    val_range: ["2023-07-01", "2023-09-21"]
+    test_range: ["2023-09-22", "2024-10-01"]
+    ratios: [0.7, 0.15, 0.15]
+  
+  identifiers:
+    turbine_id_col: "turbine_id"
+    time_col: "timestamp"
+  
+  labels:
+    enabled: true
+    label_source: "column"
+    label_col: "fault_label"
+    label_rule: "window_any"  # Label=1 if any timestep in window is anomaly
+    class_names: ["normal", "mechanical", "electrical", "thermal", "hydraulic", "grid", "sensor", "control", "icing", "other_fault"]
+    multilabel: false
+    horizon_days: [7, 28]
+    horizon_include_normal: false
+  
+  qc:
+    dedupe_rule: "last"
+    clamp: {}
+    winsorize: null
+
+features:
+  raw_channels: []
+  angular_channels: []
+  angle_units: "deg"
+  yaw_error:
+    enabled: true
+    wind_dir_col: "Wind Direction"
+    nacelle_yaw_col: "NacelleYaw"
+    output_name: "yaw_error"
+    wrap_range: "[-180,180)"
+  deltas:
+    enabled: false
+  rolling:
+    enabled: false
+  fill_value_c: 0.0
+  scaler:
+    type: "robust"
+    eps: 1.0e-6
+    clip_iqr: 3.0
+    scale_sincos: false
+  output_ordering:
+    explicit: false
+
+flags:
+  flag_names: []  # No explicit regime flags in this dataset
+  sources:
+    type: "columns"
+    mapping: {}
+  dtype: "float32"
+  causal_alignment: true
+
+model:
+  tcn:
+    D: 128  # Larger hidden size for complex sensor data
+    kernel_size: 3
+    num_blocks: 8  # Deeper for long windows
+    dilations: "powers_of_two"
+    dropout: 0.1
+    norm: "weight_norm"
+  
+  heads:
+    recon:
+      enabled: true
+    forecast:
+      enabled: true
+      summary: "last"
+      hidden: 256
+    fault:
+      enabled: true
+      pooling: "mean"
+      C: 10
+      multilabel: false
+      hidden: 128
+      horizon_days: [7, 28]
+      horizon_include_normal: false
+
+train:
+  batch_size: 256  # Matches validated pipeline test setup
+  epochs: 1
+  log_every: 5
+  p_mask: 0.15
+  fault_balanced_sampling:
+    enabled: true
+    replacement: true
+    power: 1.0
+    strategy: "binary_presence"
+    max_class_weight_ratio: null
+  
+  loss:
+    huber_delta: 1.0
+    lambdas:
+      recon: 1.0
+      pred: 1.0
+      fault: 2.0  # Emphasize fault detection
+      fault_horizons: 1.5
+    regime_weighting:
+      enabled: false
+  
+  optimizer:
+    name: "adamw"
+    lr: 1.0e-4  # Lower LR for stability
+    weight_decay: 1.0e-4
+
+infer:
+  p_score: 0.15
+  aggregation:
+    name: "masked_mean"
+  topn_features: 10  # Show top 10 contributing sensors
+  
+  calibration:
+    enabled: true
+    method: "percentile"
+    percentile: 0.995
+    per_turbine: true
+    per_regime: false
+  
+  alerting:
+    hysteresis:
+      T_on: 2.5
+      T_off: 1.5
+    debounce:
+      N_on: 3
+      N_off: 5

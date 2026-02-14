@@ -1,0 +1,26 @@
+tcn:
+  D: 64
+  kernel_size: 3
+  num_blocks: 7
+  dilations: "powers_of_two"   # "powers_of_two"|"explicit"
+  dilation_list: []
+  dropout: 0.1
+  norm: "weight_norm"          # "none"|"weight_norm"|"layer_norm"
+
+heads:
+  recon:
+    enabled: true
+  forecast:
+    enabled: true
+    summary: "last"
+    hidden: null
+  fault:
+    enabled: true
+    pooling: "mean"
+    C: 10
+    multilabel: false
+    hidden: null
+
+receptive_field_assert:
+  enabled: true
+  must_cover_L: true

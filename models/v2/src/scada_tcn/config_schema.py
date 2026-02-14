@@ -55,6 +55,7 @@ class TrainConfig:
     log_every: int
     p_mask: float
     loss: dict[str, Any]
+    fault_balanced_sampling: dict[str, Any]
     optimizer: dict[str, Any]
     scheduler: Any
 
@@ -98,7 +99,7 @@ def build_config(cfg: Any) -> RootConfig:
     rc = RootConfig(
         experiment_name=str(cfg.get("experiment_name", "exp")),
         seed=int(cfg.get("seed", 1337)),
-        device=str(cfg.get("device", "cpu")),
+        device=str(cfg.get("device", "cuda")),
         output_dir=str(cfg.get("output_dir", "artifacts")),
         data=data,
         features=features,
@@ -152,6 +153,10 @@ def validate_config(cfg: RootConfig) -> None:
     labels_enabled = bool(cfg.data.labels.get("enabled", False))
     if labels_enabled and not fault_enabled:
         raise ValueError("labels.enabled=true but model.heads.fault.enabled=false")
+
+    hz_days = list(cfg.data.labels.get("horizon_days", [7, 28]))
+    if any(int(d) <= 0 for d in hz_days):
+        raise ValueError(f"data.labels.horizon_days must be positive days; got {hz_days}")
 
     # --- masking probs ---
     p_mask = float(cfg.train.p_mask)

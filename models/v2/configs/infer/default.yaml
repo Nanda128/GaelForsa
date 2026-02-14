@@ -9,6 +9,7 @@ topn_features: 5
 calibration:
   enabled: false
   method: "percentile"
+  percentile: 0.995
   per_turbine: true
   per_regime: true
 

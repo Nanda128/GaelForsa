@@ -1,0 +1,26 @@
+{
+  "class_names": [
+    "normal",
+    "mechanical",
+    "electrical",
+    "thermal",
+    "hydraulic",
+    "grid",
+    "sensor",
+    "control",
+    "icing",
+    "other_fault"
+  ],
+  "class_to_idx": {
+    "control": 7,
+    "electrical": 2,
+    "grid": 5,
+    "hydraulic": 4,
+    "icing": 8,
+    "mechanical": 1,
+    "normal": 0,
+    "other_fault": 9,
+    "sensor": 6,
+    "thermal": 3
+  }
+}

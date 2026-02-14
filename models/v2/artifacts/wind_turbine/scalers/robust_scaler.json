@@ -1,0 +1,39 @@
+{
+  "params": {
+    "clip_iqr": 3.0,
+    "eps": 1e-06,
+    "feature_names": [
+      "Wind Speed",
+      "Ambient Temperature",
+      "Active Power",
+      "Converter Temperatures",
+      "Generator Current",
+      "Voltage"
+    ],
+    "fitted_on": {
+      "note": "AUTO features may differ per dataset run; registry is authoritative.",
+      "split_method": "time_auto",
+      "train_range": [
+        "2022-09-01",
+        "2023-06-30"
+      ]
+    },
+    "iqr": {
+      "Active Power": 0.05314634006936103,
+      "Ambient Temperature": 8.0,
+      "Converter Temperatures": 6.75,
+      "Generator Current": 745.1187438964844,
+      "Voltage": 2.5,
+      "Wind Speed": 5.049999952316284
+    },
+    "median": {
+      "Active Power": -0.019231706857681274,
+      "Ambient Temperature": 18.0,
+      "Converter Temperatures": 38.875,
+      "Generator Current": 209.4499969482422,
+      "Voltage": 398.07501220703125,
+      "Wind Speed": 5.349999904632568
+    }
+  },
+  "schema_version": 1
+}
